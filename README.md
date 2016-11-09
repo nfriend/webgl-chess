@@ -4,13 +4,13 @@ Final project for HCI 557: Computer Graphics and Geometric Modeling at [Iowa Sta
 This project is built with the following technologies:
 
 - Vanilla [WebGL](https://developer.mozilla.org/en-US/docs/Web/API/WebGL_API) for scene rendering
-- [stockfish-js](https://github.com/exoticorn/stockfish-js) for chess AI, which utilizes [WebSockets](https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API)
+- [stockfish-js](https://github.com/exoticorn/stockfish-js) for chess AI, which utilizes [Web Workers](https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Using_web_workers)
 - Angular 1 and Angular Material for UI interaction
 - [TypeScript](https://www.typescriptlang.org/), [SASS](http://sass-lang.com/), [Gulp](http://gulpjs.com/), [Webpack](https://webpack.github.io/), [Yarn](https://yarnpkg.com/)
 
 ## Browser Support
 
-Browser support for this project is limited by the use of two essential technologies: [WebSockets](https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API) and [WebGL](https://developer.mozilla.org/en-US/docs/Web/API/WebGL_API).  This project should run in the following browsers:
+Browser support for this project is limited by the use of two essential technologies: [Web Workers](https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Using_web_workers) and [WebGL](https://developer.mozilla.org/en-US/docs/Web/API/WebGL_API).  This project should run in the following browsers:
 
 - IE 11
 - Edge
