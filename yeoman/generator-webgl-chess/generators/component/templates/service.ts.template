@@ -1,5 +1,5 @@
 export class <%= uppercaseName %>Service {
-    public static injectionName = 'Required.<%= uppercaseName %>Service';
+    public static injectionName = 'WebGLChess.<%= uppercaseName %>Service';
     public static $inject = ['$log'];
 
     constructor(private $log: ng.ILogService) {

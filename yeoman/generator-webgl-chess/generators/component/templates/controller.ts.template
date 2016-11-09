@@ -3,7 +3,7 @@ import { <%= uppercaseName %>Service } from './<%= componentName %>.service';
 <%_ } _%>
 
 export class <%= uppercaseName %>Controller {
-    public static injectionName = 'Required.<%= uppercaseName %>Service';
+    public static injectionName = 'WebGLChess.<%= uppercaseName %>Service';
     <%_ if (!service) { _%>
     public static $inject = ['$log'];
     <%_ } _%>

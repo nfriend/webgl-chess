@@ -14,7 +14,7 @@ import { MainLayoutService } from './main-layout/main-layout.service';
 /* /yeoman:importBlock */
 
 angular
-    .module('required',
+    .module('webgl-chess',
     [
         'ngAria',
         'ngAnimate',
