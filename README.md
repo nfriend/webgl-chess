@@ -1,10 +1,24 @@
 # webgl-chess
-Final project for HCI 557: Computer Graphics and Geometric Modeling at Iowa State University
+Final project for HCI 557: Computer Graphics and Geometric Modeling at [Iowa State University](http://www.vrac.iastate.edu/hci/)
 
 This project is built with the following technologies:
 
 - Vanilla WebGL for scene rendering
-- [stockfish-js](https://github.com/exoticorn/stockfish-js) for chess AI 
+- [stockfish-js](https://github.com/exoticorn/stockfish-js) for chess AI, which utilizes [WebSockets](https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API)
+- Angular 1 and Angular Material for UI interaction
+- [TypeScript](https://www.typescriptlang.org/), [SASS](http://sass-lang.com/), [Gulp](http://gulpjs.com/), [Webpack](https://webpack.github.io/), [Yarn](https://yarnpkg.com/)
+
+## Browser Support
+
+Browser support for this project is limited by the use of two essential technologies: [WebSockets](https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API) and [WebGL](https://developer.mozilla.org/en-US/docs/Web/API/WebGL_API).  This project should run in the following browsers:
+
+- IE 11
+- Edge
+- Chrome
+- Safari
+- Firefox
+
+Note that this project has not been thoroughly tested in browsers other than Chrome.  For best results, use Chrome.
 
 ## Building/Running
 
