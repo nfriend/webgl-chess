@@ -13,7 +13,7 @@ This project is built with the following technologies:
 - Install [node.js](https://nodejs.org/en/) and [yarn](https://yarnpkg.com/en/docs/install)
 - Run `yarn` at the root of this repository
 - Run `yarn build`
-- Set up a local webserver to server the `build` directory
+- Set up a local webserver to serve the `build` directory
 
 ## Developing 
 
