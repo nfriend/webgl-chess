@@ -3,7 +3,7 @@ Final project for HCI 557: Computer Graphics and Geometric Modeling at [Iowa Sta
 
 This project is built with the following technologies:
 
-- Vanilla WebGL for scene rendering
+- Vanilla [WebGL](https://developer.mozilla.org/en-US/docs/Web/API/WebGL_API) for scene rendering
 - [stockfish-js](https://github.com/exoticorn/stockfish-js) for chess AI, which utilizes [WebSockets](https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API)
 - Angular 1 and Angular Material for UI interaction
 - [TypeScript](https://www.typescriptlang.org/), [SASS](http://sass-lang.com/), [Gulp](http://gulpjs.com/), [Webpack](https://webpack.github.io/), [Yarn](https://yarnpkg.com/)
