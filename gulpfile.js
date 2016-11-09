@@ -50,6 +50,11 @@ gulp.task('index.html:watch', () => {
     return gulp.watch('./app/index.html', ['index.html'])
 });
 
+gulp.task('assets', () => {
+    return gulp.src('./app/assets/**/*')
+        .pipe(gulp.dest('./build/assets/'));
+});
+
 gulp.task('test', done => {
     startKarmaServer(done, true);
 });
@@ -73,7 +78,7 @@ function startKarmaServer(done, singleRun) {
 gulp.task('build', done => {
     runSequence(
         ['clean'],
-        ['scripts', 'styles', 'index.html'],
+        ['scripts', 'styles', 'index.html', 'assets'],
         done
     );
 });
