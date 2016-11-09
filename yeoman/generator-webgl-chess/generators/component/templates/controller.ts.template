@@ -1,0 +1,23 @@
+<%_ if (service) { _%>
+import { <%= uppercaseName %>Service } from './<%= componentName %>.service';
+<%_ } _%>
+
+export class <%= uppercaseName %>Controller {
+    public static injectionName = 'Required.<%= uppercaseName %>Service';
+    <%_ if (!service) { _%>
+    public static $inject = ['$log'];
+    <%_ } _%>
+    <%_ if (service) { _%>
+    public static $inject = ['$log', <%= uppercaseName %>Service.injectionName];
+    <%_ } _%>
+
+    <%_ if (!service) { _%>
+    constructor(private $log: ng.ILogService) {
+    }
+    <%_ } _%>
+    <%_ if (service) { _%>
+    constructor(private $log: ng.ILogService, private <%= lowercaseName %>Service: <%= uppercaseName %>Service) {
+    }
+    <%_ } _%>
+    
+}

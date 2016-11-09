@@ -1,0 +1,16 @@
+<%_ if (controller) { _%>
+import { <%= uppercaseName %>Controller } from './<%= componentName %>.controller';
+<%_ } _%>
+
+export class <%= uppercaseName %>Directive {
+    public static injectionName = '<%= lowercaseName %>';
+    <%_ if (template) { _%>
+    public template = require('./<%= componentName %>.html');
+    <%_ } _%>
+    <%_ if (controller) { _%>
+    public controller = <%= uppercaseName %>Controller;
+    public bindToController = true;
+    public controllerAs = 'vm';
+    public scope = {};
+    <%_ } _%>
+}

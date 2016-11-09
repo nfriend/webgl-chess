@@ -1,0 +1,16 @@
+import { <%= uppercaseName %>Service } from './<%= componentName %>.service';
+
+describe('<%= componentName %>', () => {
+
+    let <%= lowercaseName %>Service: <%= uppercaseName %>Service;
+    let $log: ng.ILogService;
+
+    beforeEach(inject((_$log_) => {
+        $log = _$log_;
+        <%= lowercaseName %>Service = new <%= uppercaseName %>Service($log);
+    }));
+
+    it(`tests <%= uppercaseName %>Service's sanity`, () => {
+        expect(<%= lowercaseName %>Service).toBeDefined();
+    });
+});

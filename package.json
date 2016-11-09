@@ -1,0 +1,51 @@
+{
+  "name": "webgl-chess",
+  "version": "1.0.0",
+  "description": "Final project for HCI 557: Computer Graphics and Geometric Modeling at Iowa State University",
+  "main": "index.html",
+  "repository": {
+    "url": "https://github.com/nfriend/webgl-chess.git",
+    "type": "git"
+  },
+  "scripts": {
+    "build": "gulp build",
+    "test": "gulp test"
+  },
+  "author": "Nathan Friend <hello@nathanfriend.io>",
+  "license": "GPL-3.0",
+  "dependencies": {
+    "angular": "^1.5.8",
+    "angular-animate": "^1.5.8",
+    "angular-aria": "^1.5.8",
+    "angular-material": "^1.1.1",
+    "angular-mocks": "^1.5.8",
+    "angular-ui-router": "^0.3.2",
+    "jquery": "^3.1.1"
+  },
+  "devDependencies": {
+    "@types/angular": "^1.5.19",
+    "@types/angular-mocks": "^1.5.5",
+    "@types/angular-ui-router": "^1.1.34",
+    "@types/jasmine": "^2.5.37",
+    "@types/jquery": "^2.0.34",
+    "del": "^2.2.2",
+    "gulp": "^3.9.1",
+    "gulp-concat": "^2.6.0",
+    "gulp-rename": "^1.2.2",
+    "gulp-sass": "^2.3.2",
+    "gulp-util": "^3.0.7",
+    "html-loader": "^0.4.4",
+    "jasmine-core": "^2.5.2",
+    "karma": "^1.3.0",
+    "karma-chrome-launcher": "^2.0.0",
+    "karma-jasmine": "^1.0.2",
+    "karma-spec-reporter": "^0.0.26",
+    "karma-webpack": "^1.8.0",
+    "run-sequence": "^1.2.2",
+    "script-loader": "^0.7.0",
+    "ts-loader": "^1.1.0",
+    "typescript": "^2.0.8",
+    "webpack": "^1.13.3",
+    "webpack-stream": "^3.2.0"
+  }
+}
