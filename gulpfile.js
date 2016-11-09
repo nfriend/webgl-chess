@@ -8,16 +8,22 @@ const concat = require('gulp-concat');
 const karma = require('karma');
 const path = require('path');
 const gulpUtil = require('gulp-util');
+const merge2 = require('merge2');
 
 gulp.task('clean', () => {
     return del('./build/**/*');
 });
 
 gulp.task('scripts', () => {
-    return gulp.src(['./app/**/*.ts'])
+    const tsStream = gulp.src(['./app/**/*.ts'])
         .pipe(webpack(require('./webpack.config.js')).on('error', function handleError() { this.emit('end'); }))
         .pipe(rename('webgl-chess.js'))
         .pipe(gulp.dest('./build/'));
+
+    const stockfishStream = gulp.src('./app/stockfish/stockfish.js')
+        .pipe(gulp.dest('./build/'));
+
+    return merge2(tsStream, stockfishStream);
 });
 
 gulp.task('scripts:watch', () => {
