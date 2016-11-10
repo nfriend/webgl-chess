@@ -3,7 +3,8 @@
         "target": "es5",
         "allowUnreachableCode": false,
         "allowUnusedLabels": false,
-        "forceConsistentCasingInFileNames": true
+        "forceConsistentCasingInFileNames": true,
+        "allowJs": false
     },
     "exclude": [
         "node_modules",

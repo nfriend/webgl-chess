@@ -11,5 +11,6 @@ module.exports = {
             { test: /\.ts$/, loader: "ts-loader" },
             { test: /\.html$/, loader: "html" }
         ]
-    }
+    },
+    plugins: []
 };

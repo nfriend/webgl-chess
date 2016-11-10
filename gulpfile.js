@@ -1,5 +1,6 @@
 const gulp = require('gulp');
-const webpack = require('webpack-stream');
+const webpack = require('webpack')
+const webpackStream = require('webpack-stream');
 const rename = require('gulp-rename');
 const runSequence = require('run-sequence');
 const del = require('del');
@@ -10,18 +11,28 @@ const path = require('path');
 const gulpUtil = require('gulp-util');
 const merge2 = require('merge2');
 
+var minify = false;
+var dest = './build/';
+
 gulp.task('clean', () => {
-    return del('./build/**/*');
+    return del(['./build/**/*', './dist/**/*']);
 });
 
 gulp.task('scripts', () => {
+
+    const webpackConf = require('./webpack.config.js');
+
+    if (minify) {
+        webpackConf.plugins.push(new webpack.optimize.UglifyJsPlugin({ compress: { warnings: false } }));
+    }
+
     const tsStream = gulp.src(['./app/**/*.ts'])
-        .pipe(webpack(require('./webpack.config.js')).on('error', function handleError() { this.emit('end'); }))
+        .pipe(webpackStream(webpackConf).on('error', function handleError() { this.emit('end'); }))
         .pipe(rename('webgl-chess.js'))
-        .pipe(gulp.dest('./build/'));
+        .pipe(gulp.dest(dest));
 
     const stockfishStream = gulp.src('./app/stockfish/stockfish.js')
-        .pipe(gulp.dest('./build/'));
+        .pipe(gulp.dest(dest));
 
     return merge2(tsStream, stockfishStream);
 });
@@ -31,10 +42,13 @@ gulp.task('scripts:watch', () => {
 });
 
 gulp.task('styles', () => {
+
+    const sassOptions = minify ? { outputStyle: 'compressed' } : {};
+
     return gulp.src('./app/**/*.scss')
-        .pipe(sass().on('error', sass.logError))
+        .pipe(sass(sassOptions).on('error', sass.logError))
         .pipe(concat('webgl-chess.css'))
-        .pipe(gulp.dest('./build/'));
+        .pipe(gulp.dest(dest));
 });
 
 gulp.task('styles:watch', () => {
@@ -43,7 +57,7 @@ gulp.task('styles:watch', () => {
 
 gulp.task('index.html', () => {
     return gulp.src('./app/index.html')
-        .pipe(gulp.dest('./build/'));
+        .pipe(gulp.dest(dest));
 });
 
 gulp.task('index.html:watch', () => {
@@ -52,7 +66,7 @@ gulp.task('index.html:watch', () => {
 
 gulp.task('assets', () => {
     return gulp.src('./app/assets/**/*')
-        .pipe(gulp.dest('./build/assets/'));
+        .pipe(gulp.dest(path.join(dest, 'assets/')));
 });
 
 gulp.task('test', done => {
@@ -90,5 +104,16 @@ gulp.task('build:watch', done => {
         done
     );
 });
+
+gulp.task('dist', done => {
+
+    minify = true;
+    dest = './dist/'
+
+    runSequence(
+        ['build'],
+        done
+    );
+})
 
 gulp.task('default', ['build:watch']);
