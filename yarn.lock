@@ -6,6 +6,12 @@
   dependencies:
     "@types/jquery" "*"
 
+"@types/angular-material":
+  version "1.1.40"
+  resolved "https://registry.yarnpkg.com/@types/angular-material/-/angular-material-1.1.40.tgz#d1b4891ea1356555bb4f3180988a771945cdac25"
+  dependencies:
+    "@types/angular" "*"
+
 "@types/angular-mocks":
   version "1.5.5"
   resolved "https://registry.yarnpkg.com/@types/angular-mocks/-/angular-mocks-1.5.5.tgz#7fd4af2d98968297fe771639cd418734e26d9d26"

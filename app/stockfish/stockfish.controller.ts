@@ -8,11 +8,11 @@ interface Square {
 
 export class StockfishController {
     public static injectionName = 'WebGLChess.StockfishService';
-    public static $inject = ['$log', StockfishService.injectionName, ChessJsService.injectionName];
+    public static $inject = ['$log', '$mdToast', StockfishService.injectionName, ChessJsService.injectionName];
 
     private chess: chessjs.Chess;
 
-    constructor(private $log: ng.ILogService, private stockfishService: StockfishService, chessJsService: ChessJsService) {
+    constructor(private $log: ng.ILogService, private $mdToast: ng.material.IToastService, private stockfishService: StockfishService, chessJsService: ChessJsService) {
         this.chess = chessJsService.chess;
         this.updateBoard();
     }
@@ -22,6 +22,7 @@ export class StockfishController {
 
     to: string;
     from: string;
+    selected: string;
 
     inputKeydown = (ev: JQueryKeyEventObject) => {
         if (ev.which === 13) {
@@ -38,63 +39,86 @@ export class StockfishController {
     }
 
     squareClicked = (square: string) => {
-        console.log(square);
+        if (!this.from) {
+            this.from = square;
+            this.selected = this.from;
+        } else {
+            this.to = square;
+            let result = this.chess.move({
+                from: this.from,
+                to: this.to
+            });
+            if (result) {
+                this.updateBoard();
+                this.stockfishService.executeNextMove(this.chess).then(() => {
+                    this.updateBoard();
+                });
+            }
+            this.from = this.to = this.selected = null;
+        }
     }
+
+    private fontMap = {
+        dark: {
+            w: {
+                r: 'R',
+                n: 'H',
+                b: 'B',
+                q: 'Q',
+                k: 'K',
+                p: 'P'
+            },
+            b: {
+                r: 'T',
+                n: 'J',
+                b: 'N',
+                q: 'W',
+                k: 'L',
+                p: 'O',
+            }
+        },
+        light: {
+            w: {
+                r: 'r',
+                n: 'h',
+                b: 'b',
+                q: 'q',
+                k: 'k',
+                p: 'p'
+            },
+            b: {
+                r: 't',
+                n: 'j',
+                b: 'n',
+                q: 'w',
+                k: 'l',
+                p: 'o'
+            }
+        }
+    };
+
+    private letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
+    private numbers = ['8', '7', '6', '5', '4', '3', '2', '1'];
 
     private updateBoard() {
         let board: Square[][] = [];
 
-        let fontMap = {
-            b: {
-                r: 'T',
-                R: 'R',
-                n: 'J',
-                N: 'H',
-                b: 'N',
-                B: 'B',
-                q: 'W',
-                Q: 'Q',
-                k: 'L',
-                K: 'K',
-                p: 'O',
-                P: 'P',
-                '.': '+'
-            },
-            w: {
-                r: 't',
-                R: 'r',
-                n: 'j',
-                N: 'h',
-                b: 'n',
-                B: 'b',
-                q: 'w',
-                Q: 'q',
-                k: 'l',
-                K: 'k',
-                p: 'o',
-                P: 'p',
-                '.': ' '
-            }
-        };
-
-        let letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
-        let numbers = ['8', '7', '6', '5', '4', '3', '2', '1'];
-
-        numbers.forEach(number => {
+        this.numbers.forEach(number => {
             const row: Square[] = [];
-            letters.forEach(letter => {
+            this.letters.forEach(letter => {
                 let squareString = letter + number;
                 let square = this.chess.get(squareString);
+                let squareColor = this.chess.square_color(squareString);
                 if (square) {
                     // this is an occupied square
                     row.push({
-                        letter: fontMap[square.color][square.type],
+                        letter: this.fontMap[squareColor][square.color][square.type],
                         square: squareString
                     });
                 } else {
                     // this square is empty
                     row.push({
-                        letter: this.chess.square_color(squareString) === 'light' ? ' ' : '+',
+                        letter: squareColor === 'light' ? ' ' : '+',
                         square: squareString
                     });
                 }
@@ -103,9 +127,34 @@ export class StockfishController {
             board.push(row);
         });
 
-        console.log(board);
-
         this.board = board;
 
+        let message;
+        if (this.chess.in_check()) {
+            message = 'Check!';
+        }
+        if (this.chess.in_threefold_repetition()) {
+            message = 'Threefold Repetition!';
+        }
+        if (this.chess.in_checkmate()) {
+            message = 'Checkmate!';
+        }
+        if (this.chess.in_draw()) {
+            message = 'Draw!';
+        }
+        if (this.chess.in_stalemate()) {
+            message = 'Stalemate!';
+        }
+
+        if (message) {
+            this.$mdToast.show(
+                this.$mdToast.simple()
+                    .textContent(message)
+                    .position('top right')
+                    .hideDelay(10000)
+            );
+        }
+
+        this.$mdToast
     }
 }

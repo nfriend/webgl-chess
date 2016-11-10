@@ -2,7 +2,7 @@ export class StockfishService {
     public static injectionName = 'WebGLChess.StockfishService';
     public static $inject = ['$log', '$q'];
 
-    private THINKING_TIME = 3000;
+    private THINKING_TIME = 1000;
     private engine: Worker;
     private isInitialized = false;
 
@@ -61,9 +61,7 @@ export class StockfishService {
         });
 
         return this.init().then(() => {
-            let msg = 'position startpos moves ' + pastMoves.join(' ');
-            console.log(msg)
-            this.engine.postMessage(msg);
+            this.engine.postMessage('position startpos moves ' + pastMoves.join(' '));
             this.engine.postMessage('go movetime ' + this.THINKING_TIME);
             return this.waitUntil(/^bestmove/);
         }).then(message => {

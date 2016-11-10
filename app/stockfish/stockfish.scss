@@ -20,6 +20,7 @@ $fontSize: 70px;
                 height: $fontSize;
                 width: $fontSize;
                 cursor: pointer;
+                outline: none;
 
                 &:hover {
                     font-weight: bold;
@@ -29,6 +30,10 @@ $fontSize: 70px;
                     font-weight: bold;
                     color: blue;
                 }
+
+                /*&.blank:hover {
+                    background: rgba(0, 0, 0, .1);
+                }*/
             }
         }
     }
