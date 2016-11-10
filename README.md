@@ -5,6 +5,7 @@ This project is built with the following technologies:
 
 - Vanilla [WebGL](https://developer.mozilla.org/en-US/docs/Web/API/WebGL_API) for scene rendering
 - [stockfish-js](https://github.com/exoticorn/stockfish-js) for chess AI, which utilizes [Web Workers](https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Using_web_workers)
+- [chess-js](https://github.com/jhlywa/chess.js) for move validation/piece placement and movement/check detection/etc.
 - Angular 1 and Angular Material for UI interaction
 - [TypeScript](https://www.typescriptlang.org/), [SASS](http://sass-lang.com/), [Gulp](http://gulpjs.com/), [Webpack](https://webpack.github.io/), [Yarn](https://yarnpkg.com/)
 
