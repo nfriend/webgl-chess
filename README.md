@@ -8,6 +8,7 @@ This project is built with the following technologies:
 - [chess-js](https://github.com/jhlywa/chess.js) for move validation/piece placement and movement/check detection/etc.
 - Angular 1 and Angular Material for UI interaction
 - [TypeScript](https://www.typescriptlang.org/), [SASS](http://sass-lang.com/), [Gulp](http://gulpjs.com/), [Webpack](https://webpack.github.io/), [Yarn](https://yarnpkg.com/)
+- ["Chess" font](http://www.dafont.com/chess.font) for chess icons in 2D mode
 
 ## Building/Running
 
