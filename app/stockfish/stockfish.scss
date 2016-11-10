@@ -1,3 +1,35 @@
+@font-face {
+    font-family: 'Chess';
+    src: url('assets/chess.ttf');
+}
+
+$fontSize: 70px;
+
 .stockfish {
-    color: red;
+    text-align: center;
+
+    .board {
+        font-family: 'Chess', monospace;
+        font-size: $fontSize;
+        padding-bottom: 20px;
+
+        .row {
+            
+            .square {
+                float: left;
+                height: $fontSize;
+                width: $fontSize;
+                cursor: pointer;
+
+                &:hover {
+                    font-weight: bold;
+                }
+
+                &.selected {
+                    font-weight: bold;
+                    color: blue;
+                }
+            }
+        }
+    }
 }

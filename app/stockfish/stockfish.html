@@ -1,3 +1,8 @@
-<div class="stockfish">
-    <h3>stockfish!</h3>
+<div class="stockfish container">
+    <div class="board">
+        <div class="row" ng-repeat="row in vm.board">
+            <div class="square" ng-repeat="square in row" ng-click="vm.squareClicked(square.square)">{{square.letter}}</div>
+        </div>
+    </div>
+    <div class="cleared"></div>
 </div>

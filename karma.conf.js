@@ -22,6 +22,7 @@ module.exports = config => {
             { pattern: './node_modules/angular-material/angular-material.js', watched: false, included: true },
             { pattern: './node_modules/angular-mocks/angular-mocks.js', watched: false, included: true },
             { pattern: './node_modules/angular-ui-router/release/angular-ui-router.js', watched: false, included: true },
+            { pattern: './node_modules/chess.js/chess.js', watched: false, included: true },
             { pattern: '**/*.spec.ts', watched: false },
         ],
         preprocessors: {

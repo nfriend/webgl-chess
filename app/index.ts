@@ -4,6 +4,7 @@ require('script!../node_modules/angular-aria/angular-aria.js');
 require('script!../node_modules/angular-animate/angular-animate.js');
 require('script!../node_modules/angular-material/angular-material.js');
 require('script!../node_modules/angular-ui-router/release/angular-ui-router.js');
+require('script!../node_modules/chess.js/chess.js');
 
 /* yeoman:importBlock */
 import { routeConfig } from './config/routes';
@@ -14,6 +15,7 @@ import { MainLayoutService } from './main-layout/main-layout.service';
 import { StockfishDirective } from './stockfish/stockfish.directive';
 import { StockfishController } from './stockfish/stockfish.controller';
 import { StockfishService } from './stockfish/stockfish.service';
+import { ChessJsService } from './chessjs/chessjs.service';
 /* /yeoman:importBlock */
 
 angular
@@ -26,13 +28,13 @@ angular
     ])
 
     /* yeoman:registrationBlock */
-    
     .directive(MainLayoutDirective.injectionName, () => new MainLayoutDirective)
     .controller(MainLayoutController.injectionName, MainLayoutController)
     .service(MainLayoutService.injectionName, MainLayoutService)
     .directive(StockfishDirective.injectionName, () => new StockfishDirective)
     .controller(StockfishController.injectionName, StockfishController)
     .service(StockfishService.injectionName, StockfishService)
+    .service(ChessJsService.injectionName, ChessJsService)
     /* /yeoman:registrationBlock */
 
     .config(['$stateProvider', '$urlRouterProvider', routeConfig]);
