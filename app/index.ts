@@ -1,5 +1,5 @@
-import * as $ from 'jquery';
-import * as angular from 'angular';
+require('script!../node_modules/jquery/dist/jquery.min.js');
+import 'angular';
 import 'angular-aria';
 import 'angular-animate';
 import 'angular-material';
@@ -11,10 +11,13 @@ import { routeConfig } from './config/routes';
 import { MainLayoutDirective } from './main-layout/main-layout.directive';
 import { MainLayoutController } from './main-layout/main-layout.controller';
 import { MainLayoutService } from './main-layout/main-layout.service';
-import { StockfishDirective } from './stockfish/stockfish.directive';
-import { StockfishController } from './stockfish/stockfish.controller';
 import { StockfishService } from './stockfish/stockfish.service';
 import { ChessJsService } from './chessjs/chessjs.service';
+import { TwoDimensionalBoardDirective } from './two-dimensional-board/two-dimensional-board.directive';
+import { TwoDimensionalBoardController } from './two-dimensional-board/two-dimensional-board.controller';
+import { ThreeDimensionalBoardDirective } from './three-dimensional-board/three-dimensional-board.directive';
+import { ThreeDimensionalBoardController } from './three-dimensional-board/three-dimensional-board.controller';
+import { ThreeDimensionalBoardService } from './three-dimensional-board/three-dimensional-board.service';
 /* /yeoman:importBlock */
 
 angular
@@ -30,10 +33,13 @@ angular
     .directive(MainLayoutDirective.injectionName, () => new MainLayoutDirective)
     .controller(MainLayoutController.injectionName, MainLayoutController)
     .service(MainLayoutService.injectionName, MainLayoutService)
-    .directive(StockfishDirective.injectionName, () => new StockfishDirective)
-    .controller(StockfishController.injectionName, StockfishController)
     .service(StockfishService.injectionName, StockfishService)
     .service(ChessJsService.injectionName, ChessJsService)
+    .directive(TwoDimensionalBoardDirective.injectionName, () => new TwoDimensionalBoardDirective)
+    .controller(TwoDimensionalBoardController.injectionName, TwoDimensionalBoardController)
+    .directive(ThreeDimensionalBoardDirective.injectionName, ['$window', ($window: ng.IWindowService) => new ThreeDimensionalBoardDirective($window)])
+    .controller(ThreeDimensionalBoardController.injectionName, ThreeDimensionalBoardController)
+    .service(ThreeDimensionalBoardService.injectionName, ThreeDimensionalBoardService)
     /* /yeoman:registrationBlock */
 
     .config(['$stateProvider', '$urlRouterProvider', routeConfig]);

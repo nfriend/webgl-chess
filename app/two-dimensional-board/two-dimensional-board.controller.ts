@@ -1,4 +1,4 @@
-import { StockfishService } from './stockfish.service';
+import { StockfishService } from '../stockfish/stockfish.service';
 import { ChessJsService } from '../chessjs/chessjs.service';
 
 interface Square {
@@ -6,8 +6,8 @@ interface Square {
     square: string;
 }
 
-export class StockfishController {
-    public static injectionName = 'WebGLChess.StockfishService';
+export class TwoDimensionalBoardController {
+    public static injectionName = 'WebGLChess.TwoDimensionalBoardService';
     public static $inject = ['$log', '$mdToast', StockfishService.injectionName, ChessJsService.injectionName];
 
     private chess: chessjs.Chess;
@@ -157,4 +157,5 @@ export class StockfishController {
 
         this.$mdToast
     }
+
 }

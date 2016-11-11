@@ -6,5 +6,7 @@ export class MainLayoutDirective {
     public controller = MainLayoutController;
     public bindToController = true;
     public controllerAs = 'vm';
-    public scope = {};
+    public scope = {
+        boardToShow: '@'
+    };
 }

@@ -1,3 +1,7 @@
-<div class="main-layout" layout="row" layout-align="center center">
-    <stockfish flex="nogrow"></stockfish>
+<div class="main-layout" layout="row" layout-align="center center" ng-if="vm.boardToShow === '2d'">
+    <two-dimensional-board flex="nogrow"></two-dimensional-board>
+</div>
+
+<div class="main-layout" layout="column" layout-align="center stretch" ng-if="vm.boardToShow === '3d'">
+    <three-dimensional-board ng-if="vm.boardToShow === '3d'" flex="100" layout="column"></three-dimensional-board>
 </div>

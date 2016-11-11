@@ -1,3 +1,5 @@
+const webpack = require('webpack');
+
 module.exports = {
     entry: './app/index.ts',
     output: {
@@ -8,8 +10,8 @@ module.exports = {
     },
     module: {
         loaders: [
-            { test: /\.ts$/, loader: "ts-loader" },
-            { test: /\.html$/, loader: "html" }
+            { test: /\.ts$/, loader: 'ts-loader' },
+            { test: /\.html$/, loader: 'html' }
         ]
     },
     plugins: []
