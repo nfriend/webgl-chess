@@ -18,6 +18,7 @@ import { TwoDimensionalBoardController } from './two-dimensional-board/two-dimen
 import { ThreeDimensionalBoardDirective } from './three-dimensional-board/three-dimensional-board.directive';
 import { ThreeDimensionalBoardController } from './three-dimensional-board/three-dimensional-board.controller';
 import { ThreeDimensionalBoardService } from './three-dimensional-board/three-dimensional-board.service';
+import { ObjService } from './three-dimensional-board/obj-service/obj.service';
 /* /yeoman:importBlock */
 
 angular
@@ -40,6 +41,7 @@ angular
     .directive(ThreeDimensionalBoardDirective.injectionName, ['$window', ($window: ng.IWindowService) => new ThreeDimensionalBoardDirective($window)])
     .controller(ThreeDimensionalBoardController.injectionName, ThreeDimensionalBoardController)
     .service(ThreeDimensionalBoardService.injectionName, ThreeDimensionalBoardService)
+    .service(ObjService.injectionName, ObjService)
     /* /yeoman:registrationBlock */
 
     .config(['$stateProvider', '$urlRouterProvider', routeConfig]);

@@ -1,4 +1,5 @@
 import { ThreeDimensionalBoardController } from './three-dimensional-board.controller';
+import { WebGLManager } from './webgl-manager';
 
 export class ThreeDimensionalBoardDirective {
     public static injectionName = 'threeDimensionalBoard';
@@ -24,6 +25,9 @@ export class ThreeDimensionalBoardDirective {
         if (!gl) {
             console.log('Unable to intialize WebGL!  Your browser may not support it.');
         }
+
+        let manager = new WebGLManager(gl);
+        manager.initialize();
 
         this.$window.on('resize', this.resizeCanvas);
         $scope.$on('$destroy', () => {
