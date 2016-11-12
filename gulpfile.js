@@ -38,7 +38,7 @@ gulp.task('scripts', () => {
 });
 
 gulp.task('scripts:watch', () => {
-    return gulp.watch(['./app/**/*.ts', './app/**/*.html'], ['build']);
+    return gulp.watch(['./app/**/*.ts', './app/**/*.html', './app/three-dimensional-board/shaders/**/*'], ['build']);
 });
 
 gulp.task('styles', () => {

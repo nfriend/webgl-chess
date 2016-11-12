@@ -5,6 +5,8 @@ import 'angular-animate';
 import 'angular-material';
 import 'angular-ui-router';
 require('script!../node_modules/chess.js/chess.min.js');
+require('script!./third-party/sylvester.min.js');
+require('script!./third-party/glUtils.min.js');
 
 /* yeoman:importBlock */
 import { routeConfig } from './config/routes';
