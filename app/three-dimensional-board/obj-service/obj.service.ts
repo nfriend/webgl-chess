@@ -9,9 +9,9 @@ interface ObjectHolder {
 
 export class ObjService {
     public static injectionName = 'WebGLChess.ObjService';
-    public static $inject = ['$log', '$http', '$q'];
+    public static $inject = ['$log', '$http', '$q', '$timeout'];
 
-    constructor(private $log: ng.ILogService, private $http: ng.IHttpService, private $q: ng.IQService) {
+    constructor(private $log: ng.ILogService, private $http: ng.IHttpService, private $q: ng.IQService, private $timeout: ng.ITimeoutService) {
     }
 
     private objFilepaths: ObjectHolder = {
@@ -24,15 +24,37 @@ export class ObjService {
     private objs: ObjectHolder = {};
 
     public downloadObjs(): ng.IPromise<any> {
+        const deferred = this.$q.defer();
+        let completedCount = 0;
         const allPromises: ng.IPromise<any>[] = [];
-        Object.keys(this.objFilepaths).forEach(key => {
-            allPromises.push(this.downloadObj(key, 'obj', this.objFilepaths[key].obj));
-            allPromises.push(this.downloadObj(key, 'mtl', this.objFilepaths[key].mtl));
+        const allKeys = Object.keys(this.objFilepaths);
+
+
+        allKeys.forEach(key => {
+
+            allPromises.push(this.downloadObj(key, 'obj', this.objFilepaths[key].obj).then(() => {
+                deferred.notify({
+                    current: ++completedCount,
+                    total: allKeys.length * 2,
+                    loadingText: this.objFilepaths[key].obj
+                });
+            }));
+
+            allPromises.push(this.downloadObj(key, 'mtl', this.objFilepaths[key].mtl).then(() => {
+                deferred.notify({
+                    current: ++completedCount,
+                    total: allKeys.length * 2,
+                    loadingText: this.objFilepaths[key].mtl
+                });
+            }));
+
         });
-        return this.$q.all(allPromises).then(() => {
-            console.log('done!');
-            debugger;
-        })
+
+        this.$q.all(allPromises).then(() => {
+            deferred.resolve();
+        });
+
+        return deferred.promise;
     }
 
     private downloadObj(key: string, type: fileType, filepath: string): ng.IPromise<void> {
@@ -45,6 +67,8 @@ export class ObjService {
             }
             
             this.objs[key][type] = response.data;
+        }).then(() => {
+            return this.$timeout(Math.random() * 1000 + 500);
         });
     }
 }
