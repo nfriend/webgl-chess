@@ -8,7 +8,7 @@ const routeConfig = ($stateProvider: ng.ui.IStateProvider, $urlRouterProvider: n
 
     $stateProvider.state({
         name: 'webglchess.threedimensional',
-        url: '/',
+        url: '/3d',
         template: '<main-layout board-to-show="3d"></main-layout>'
     });
 
@@ -18,7 +18,7 @@ const routeConfig = ($stateProvider: ng.ui.IStateProvider, $urlRouterProvider: n
         template: '<main-layout board-to-show="2d"></main-layout>'
     });
 
-    $urlRouterProvider.otherwise('/');
+    $urlRouterProvider.otherwise('/2d');
 }
 
 export { routeConfig };

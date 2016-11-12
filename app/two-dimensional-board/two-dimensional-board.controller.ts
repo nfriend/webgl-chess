@@ -4,18 +4,14 @@ import { ChessJsService } from '../chessjs/chessjs.service';
 interface Square {
     letter: string;
     square: string;
+    isBlank?: boolean;
 }
 
 export class TwoDimensionalBoardController {
     public static injectionName = 'WebGLChess.TwoDimensionalBoardService';
-    public static $inject = ['$log', '$mdToast', StockfishService.injectionName, ChessJsService.injectionName];
+    public static $inject = ['$log', '$scope', '$window', StockfishService.injectionName, ChessJsService.injectionName];
 
     private chess: chessjs.Chess;
-
-    constructor(private $log: ng.ILogService, private $mdToast: ng.material.IToastService, private stockfishService: StockfishService, chessJsService: ChessJsService) {
-        this.chess = chessJsService.chess;
-        this.updateBoard();
-    }
 
     board: Square[][];
     input = '';
@@ -24,7 +20,20 @@ export class TwoDimensionalBoardController {
     from: string;
     selected: string;
 
-    inputKeydown = (ev: JQueryKeyEventObject) => {
+    message: string = '';
+
+    constructor(private $log: ng.ILogService, private $scope: ng.IScope, private $window: ng.IWindowService, private stockfishService: StockfishService, chessJsService: ChessJsService) {
+        this.chess = chessJsService.chess;
+        this.updateBoard();
+
+        angular.element($window).on('keydown', this.onWindowKeydown);
+
+        $scope.$on('destroy', () => {
+            angular.element($window).off('keydown', this.onWindowKeydown);
+        });
+    }
+
+    public inputKeydown = (ev: JQueryKeyEventObject) => {
         if (ev.which === 13) {
             this.chess.move({
                 from: this.input.substr(0, 2),
@@ -38,7 +47,7 @@ export class TwoDimensionalBoardController {
         }
     }
 
-    squareClicked = (square: string) => {
+    public squareClicked = (square: string) => {
         if (!this.from) {
             this.from = square;
             this.selected = this.from;
@@ -56,6 +65,15 @@ export class TwoDimensionalBoardController {
             }
             this.from = this.to = this.selected = null;
         }
+    }
+
+    public isSquareValidMove = (squareString: string): boolean => {
+        if (!this.selected) {
+            return false;
+        }
+
+        const validMoves = (<chessjs.Move[]>this.chess.moves({ verbose: true })).filter(m => m.from === this.selected).map(m => m.to);
+        return validMoves.indexOf(squareString) !== -1;
     }
 
     private fontMap = {
@@ -118,8 +136,9 @@ export class TwoDimensionalBoardController {
                 } else {
                     // this square is empty
                     row.push({
-                        letter: squareColor === 'light' ? ' ' : '+',
-                        square: squareString
+                        letter: '+',
+                        square: squareString,
+                        isBlank: squareColor === 'light'
                     });
                 }
             });
@@ -129,33 +148,30 @@ export class TwoDimensionalBoardController {
 
         this.board = board;
 
-        let message;
+        this.message = '';
         if (this.chess.in_check()) {
-            message = 'Check!';
+            this.message = 'Check!';
         }
         if (this.chess.in_threefold_repetition()) {
-            message = 'Threefold Repetition!';
+            this.message = 'Threefold Repetition!';
         }
         if (this.chess.in_checkmate()) {
-            message = 'Checkmate!';
+            this.message = 'Checkmate!';
         }
         if (this.chess.in_draw()) {
-            message = 'Draw!';
+            this.message = 'Draw!';
         }
         if (this.chess.in_stalemate()) {
-            message = 'Stalemate!';
+            this.message = 'Stalemate!';
         }
+    }
 
-        if (message) {
-            this.$mdToast.show(
-                this.$mdToast.simple()
-                    .textContent(message)
-                    .position('top right')
-                    .hideDelay(10000)
-            );
+    private onWindowKeydown = (ev: JQueryKeyEventObject) => {
+        if (ev.which === 27) {
+            this.$scope.$apply(() => {
+                this.from = this.to = this.selected = null;
+            });
         }
-
-        this.$mdToast
     }
 
 }

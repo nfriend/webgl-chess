@@ -3,22 +3,21 @@
     src: url('assets/chess.ttf');
 }
 
-$fontSize: 70px;
+$extraSmallFontSize: 32px;
+$smallFontSize: 60px;
+$mediumFontSize: 90px;
+$largeFontSize: 140px;
 
 .two-dimensional-board {
     text-align: center;
 
     .board {
         font-family: 'Chess', monospace;
-        font-size: $fontSize;
         padding-bottom: 20px;
 
         .row {
-            
             .square {
                 float: left;
-                height: $fontSize;
-                width: $fontSize;
                 cursor: pointer;
                 outline: none;
 
@@ -31,9 +30,87 @@ $fontSize: 70px;
                     color: blue;
                 }
 
-                /*&.blank:hover {
-                    background: rgba(0, 0, 0, .1);
-                }*/
+                &.valid-move {
+                    color: green;
+                }
+
+                &.blank {
+                    opacity: 0;
+                    font-weight: normal;
+                    transform: scale(-1, 1);
+
+                    &.valid-move {
+                        opacity: .2;
+
+                        &:hover {
+                            font-weight: bold;
+                        }
+                    }
+
+                    &:hover, {
+                        opacity: .2;
+                    }
+                }
+            }
+        }
+    }
+}
+
+@media (max-width: 499px) {
+    .two-dimensional-board {
+        .board {
+            font-size: $extraSmallFontSize;
+
+            .row {
+                .square {
+                    height: $extraSmallFontSize;
+                    width: $extraSmallFontSize;
+                }
+            }
+        }
+    }
+}
+
+@media (min-width: 500px) and (max-width: 1024px) {
+    .two-dimensional-board {
+        .board {
+            font-size: $smallFontSize;
+
+            .row {
+                .square {
+                    height: $smallFontSize;
+                    width: $smallFontSize;
+                }
+            }
+        }
+    }
+}
+
+@media (min-width: 1025px) and (max-width: 1600px) {
+    .two-dimensional-board {
+        .board {
+            font-size: $mediumFontSize;
+
+            .row {
+                .square {
+                    height: $mediumFontSize;
+                    width: $mediumFontSize;
+                }
+            }
+        }
+    }
+}
+
+@media (min-width: 1601px) {
+    .two-dimensional-board {
+        .board {
+            font-size: $largeFontSize;
+
+            .row {
+                .square {
+                    height: $largeFontSize;
+                    width: $largeFontSize;
+                }
             }
         }
     }
