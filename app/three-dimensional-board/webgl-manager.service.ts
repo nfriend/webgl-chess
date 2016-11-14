@@ -14,8 +14,10 @@ export class WebGLManagerService {
     private shaderProgram: WebGLProgram;
     private vertexPositionAttribute: number;
     private vertexColorAttribute: number;
+    private vertexNormalAttribute: number;
     private cubeVerticesBuffer: WebGLBuffer;
     private cubeVerticesColorBuffer: WebGLBuffer;
+    private cubeVerticesNormalBuffer: WebGLBuffer;
     private cubeVerticesIndexBuffer: WebGLBuffer;
     private cubeRotation = 250;
     private cubeXOffset = 0.0;
@@ -74,6 +76,8 @@ export class WebGLManagerService {
         this.gl.enableVertexAttribArray(this.vertexPositionAttribute);
         this.vertexColorAttribute = this.gl.getAttribLocation(this.shaderProgram, 'aVertexColor');
         this.gl.enableVertexAttribArray(this.vertexColorAttribute);
+        this.vertexNormalAttribute = this.gl.getAttribLocation(this.shaderProgram, 'aVertexNormal');
+        this.gl.enableVertexAttribArray(this.vertexNormalAttribute);
     }
 
     private initializeBuffers() {
@@ -82,14 +86,23 @@ export class WebGLManagerService {
         const vertices = _.flatten(this.objService.objs['pawn'].vertices.map(v => [v.x, v.y, v.z]));
         this.gl.bufferData(this.gl.ARRAY_BUFFER, new Float32Array(vertices), this.gl.STATIC_DRAW);
 
+        console.log(vertices)
+
         let generatedColors = [];
         for (var i = 0; i < vertices.length * 3; i++) {
-            generatedColors = generatedColors.concat([1.0, 1.0, 1.0, 1.0]);
+            generatedColors = generatedColors.concat([0.0, 0.0, 0.0, 0.0]);
         };
 
         this.cubeVerticesColorBuffer = this.gl.createBuffer();
         this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.cubeVerticesColorBuffer);
         this.gl.bufferData(this.gl.ARRAY_BUFFER, new Float32Array(generatedColors), this.gl.STATIC_DRAW);
+
+        this.cubeVerticesNormalBuffer = this.gl.createBuffer();
+        this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.cubeVerticesNormalBuffer);
+        const normals = _.flatten(this.objService.objs['pawn'].vertexNormals.map(v => [v.x, v.y, v.z]));
+        this.gl.bufferData(this.gl.ARRAY_BUFFER, new Float32Array(normals), this.gl.STATIC_DRAW);
+
+        console.log(normals)
 
         this.cubeVerticesIndexBuffer = this.gl.createBuffer();
         this.gl.bindBuffer(this.gl.ELEMENT_ARRAY_BUFFER, this.cubeVerticesIndexBuffer);
@@ -119,6 +132,8 @@ export class WebGLManagerService {
         this.gl.vertexAttribPointer(this.vertexPositionAttribute, 3, this.gl.FLOAT, false, 0, 0);
         this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.cubeVerticesColorBuffer);
         this.gl.vertexAttribPointer(this.vertexColorAttribute, 4, this.gl.FLOAT, false, 0, 0);
+        this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.cubeVerticesNormalBuffer);
+        this.gl.vertexAttribPointer(this.vertexNormalAttribute, 3, this.gl.FLOAT, false, 0, 0);
         this.gl.bindBuffer(this.gl.ELEMENT_ARRAY_BUFFER, this.cubeVerticesIndexBuffer);
 
         var pUniform = this.gl.getUniformLocation(this.shaderProgram, "uPMatrix");
@@ -127,7 +142,7 @@ export class WebGLManagerService {
         var mvUniform = this.gl.getUniformLocation(this.shaderProgram, "uMVMatrix");
         this.gl.uniformMatrix4fv(mvUniform, false, new Float32Array(this.mvMatrix.flatten()));
 
-        this.gl.drawElements(this.gl.TRIANGLES, this.objService.objs['pawn'].vertices.length * 3, this.gl.UNSIGNED_SHORT, 0);
+        this.gl.drawElements(this.gl.TRIANGLES, this.objService.objs['pawn'].faces.length * 3, this.gl.UNSIGNED_SHORT, 0);
     }
 
     private multMatrix(m) {

@@ -1,5 +1,6 @@
 attribute vec3 aVertexPosition;
 attribute vec4 aVertexColor;
+attribute vec4 aVertexNormal;
 
 uniform mat4 uMVMatrix;
 uniform mat4 uPMatrix;
@@ -8,6 +9,5 @@ varying lowp vec4 vColor;
 
 void main(void) {
     gl_Position = uPMatrix * uMVMatrix * vec4(aVertexPosition, 1.0);
-    vColor = aVertexColor;
-    vColor = vec4(1.0, 1.0, 1.0, 1.0);
+    vColor = (aVertexNormal + aVertexColor) * 0.5 + 0.5;
 }
