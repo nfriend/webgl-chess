@@ -21,6 +21,7 @@ import { ThreeDimensionalBoardDirective } from './three-dimensional-board/three-
 import { ThreeDimensionalBoardController } from './three-dimensional-board/three-dimensional-board.controller';
 import { ThreeDimensionalBoardService } from './three-dimensional-board/three-dimensional-board.service';
 import { ObjService } from './three-dimensional-board/obj-service/obj.service';
+import { WebGLManagerService } from './three-dimensional-board/webgl-manager.service';
 /* /yeoman:importBlock */
 
 angular
@@ -40,10 +41,11 @@ angular
     .service(ChessJsService.injectionName, ChessJsService)
     .directive(TwoDimensionalBoardDirective.injectionName, () => new TwoDimensionalBoardDirective)
     .controller(TwoDimensionalBoardController.injectionName, TwoDimensionalBoardController)
-    .directive(ThreeDimensionalBoardDirective.injectionName, ['$window', ($window: ng.IWindowService) => new ThreeDimensionalBoardDirective($window)])
+    .directive(ThreeDimensionalBoardDirective.injectionName, ['$window', WebGLManagerService.injectionName, ($window: ng.IWindowService, wms: WebGLManagerService) => new ThreeDimensionalBoardDirective($window, wms)])
     .controller(ThreeDimensionalBoardController.injectionName, ThreeDimensionalBoardController)
     .service(ThreeDimensionalBoardService.injectionName, ThreeDimensionalBoardService)
     .service(ObjService.injectionName, ObjService)
+    .service(WebGLManagerService.injectionName, WebGLManagerService)
     /* /yeoman:registrationBlock */
 
     .config(['$stateProvider', '$urlRouterProvider', routeConfig]);

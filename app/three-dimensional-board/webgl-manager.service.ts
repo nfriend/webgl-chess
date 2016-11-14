@@ -1,7 +1,15 @@
+import { ObjService } from './obj-service/obj.service';
+import * as _ from 'lodash';
+
 const vertexShader = require('raw!./shaders/shader.vs');
 const fragmentShader = require('raw!./shaders/shader.fs');
 
-export class WebGLManager {
+export class WebGLManagerService {
+
+    public static injectionName = 'WebGLChess.WebGLManagerService';
+    public static $inject = [ObjService.injectionName];
+
+    public gl: WebGLRenderingContext;
 
     private shaderProgram: WebGLProgram;
     private vertexPositionAttribute: number;
@@ -9,17 +17,21 @@ export class WebGLManager {
     private cubeVerticesBuffer: WebGLBuffer;
     private cubeVerticesColorBuffer: WebGLBuffer;
     private cubeVerticesIndexBuffer: WebGLBuffer;
-    private cubeRotation = 500;
+    private cubeRotation = 250;
     private cubeXOffset = 0.0;
     private cubeYOffset = 0.0;
     private cubeZOffset = 0.0;
-    private perspectiveMatrix: any;
-    private mvMatrix;
+    private perspectiveMatrix: Matrix;
+    private mvMatrix: Matrix;
 
-    constructor(private gl: WebGLRenderingContext) {
+    constructor(private objService: ObjService) {
     }
 
     public initialize() {
+        if (!this.gl) {
+            throw WebGLManagerService.injectionName + ` must have its "gl" property set before calling initialize();`;
+        }
+
         this.gl.clearColor(0.0, 0.0, 0.0, 1.0); // Set clear color to black, fully opaque
         this.gl.enable(this.gl.DEPTH_TEST); // Enable depth testing
         this.gl.depthFunc(this.gl.LEQUAL); // Near things obscure far things
@@ -67,62 +79,13 @@ export class WebGLManager {
     private initializeBuffers() {
         this.cubeVerticesBuffer = this.gl.createBuffer();
         this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.cubeVerticesBuffer);
-
-        const vertices = [
-            // Front face
-            -1.0, -1.0, 1.0,
-            1.0, -1.0, 1.0,
-            1.0, 1.0, 1.0,
-            -1.0, 1.0, 1.0,
-
-            // Back face
-            -1.0, -1.0, -1.0,
-            -1.0, 1.0, -1.0,
-            1.0, 1.0, -1.0,
-            1.0, -1.0, -1.0,
-
-            // Top face
-            -1.0, 1.0, -1.0,
-            -1.0, 1.0, 1.0,
-            1.0, 1.0, 1.0,
-            1.0, 1.0, -1.0,
-
-            // Bottom face
-            -1.0, -1.0, -1.0,
-            1.0, -1.0, -1.0,
-            1.0, -1.0, 1.0,
-            -1.0, -1.0, 1.0,
-
-            // Right face
-            1.0, -1.0, -1.0,
-            1.0, 1.0, -1.0,
-            1.0, 1.0, 1.0,
-            1.0, -1.0, 1.0,
-
-            // Left face
-            -1.0, -1.0, -1.0,
-            -1.0, -1.0, 1.0,
-            -1.0, 1.0, 1.0,
-            -1.0, 1.0, -1.0
-        ];
-
+        const vertices = _.flatten(this.objService.objs['pawn'].vertices.map(v => [v.x, v.y, v.z]));
         this.gl.bufferData(this.gl.ARRAY_BUFFER, new Float32Array(vertices), this.gl.STATIC_DRAW);
 
-        const colors = [
-            [1.0, 1.0, 1.0, 1.0],    // Front face: white
-            [1.0, 0.0, 0.0, 1.0],    // Back face: red
-            [0.0, 1.0, 0.0, 1.0],    // Top face: green
-            [0.0, 0.0, 1.0, 1.0],    // Bottom face: blue
-            [1.0, 1.0, 0.0, 1.0],    // Right face: yellow
-            [1.0, 0.0, 1.0, 1.0]     // Left face: purple
-        ];
-
         let generatedColors = [];
-        colors.forEach(c => {
-            for (let j = 0; j < 4; j++) {
-                generatedColors = generatedColors.concat(c);
-            }
-        });
+        for (var i = 0; i < vertices.length * 3; i++) {
+            generatedColors = generatedColors.concat([1.0, 1.0, 1.0, 1.0]);
+        };
 
         this.cubeVerticesColorBuffer = this.gl.createBuffer();
         this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.cubeVerticesColorBuffer);
@@ -131,14 +94,12 @@ export class WebGLManager {
         this.cubeVerticesIndexBuffer = this.gl.createBuffer();
         this.gl.bindBuffer(this.gl.ELEMENT_ARRAY_BUFFER, this.cubeVerticesIndexBuffer);
 
-        const cubeVertexIndices = [
-            0, 1, 2, 0, 2, 3,           // front
-            4, 5, 6, 4, 6, 7,           // back
-            8, 9, 10, 8, 10, 11,        // top
-            12, 13, 14, 12, 14, 15,     // bottom
-            16, 17, 18, 16, 18, 19,     // right
-            20, 21, 22, 20, 22, 23      // left
-        ];
+        const cubeVertexIndices = [];
+        this.objService.objs['pawn'].faces.forEach(f => {
+            f.vertices.forEach(v => {
+                cubeVertexIndices.push(v.vertexIndex - 1);
+            });
+        });
 
         this.gl.bufferData(this.gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(cubeVertexIndices), this.gl.STATIC_DRAW);
     }
@@ -148,10 +109,10 @@ export class WebGLManager {
         this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
 
         this.perspectiveMatrix = makePerspective(45, 640.0 / 480.0, 0.1, 100.0);
-        this.loadIdentity();
+        this.mvMatrix = Matrix.I(4);
 
-        this.mvTranslate([-0.0, 0.0, -6.0]);
-        this.mvRotate(this.cubeRotation, [1, 0, 1]);
+        this.mvTranslate([0.0, -1.0, -3.0]);
+        //this.mvRotate(this.cubeRotation, [1, 0, 1]);
         this.mvTranslate([this.cubeXOffset, this.cubeYOffset, this.cubeZOffset]);
 
         this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.cubeVerticesBuffer);
@@ -166,11 +127,7 @@ export class WebGLManager {
         var mvUniform = this.gl.getUniformLocation(this.shaderProgram, "uMVMatrix");
         this.gl.uniformMatrix4fv(mvUniform, false, new Float32Array(this.mvMatrix.flatten()));
 
-        this.gl.drawElements(this.gl.TRIANGLES, 36, this.gl.UNSIGNED_SHORT, 0);
-    }
-
-    private loadIdentity() {
-        this.mvMatrix = Matrix.I(4);
+        this.gl.drawElements(this.gl.TRIANGLES, this.objService.objs['pawn'].vertices.length * 3, this.gl.UNSIGNED_SHORT, 0);
     }
 
     private multMatrix(m) {

@@ -1,9 +1,9 @@
 import { ThreeDimensionalBoardController } from './three-dimensional-board.controller';
-import { WebGLManager } from './webgl-manager';
+import { WebGLManagerService } from './webgl-manager.service';
 
 export class ThreeDimensionalBoardDirective {
     public static injectionName = 'threeDimensionalBoard';
-    public static $inject = ['$window'];
+    public static $inject = ['$window', WebGLManagerService.injectionName];
     public template = require('./three-dimensional-board.html');
     public controller = ThreeDimensionalBoardController;
     public bindToController = true;
@@ -13,7 +13,7 @@ export class ThreeDimensionalBoardDirective {
     private $window: JQuery; 
     private canvas: HTMLCanvasElement;
 
-    constructor(private windowService: ng.IWindowService) {
+    constructor(private windowService: ng.IWindowService, private webglManagerService: WebGLManagerService) {
         this.$window = angular.element(windowService);
     }
 
@@ -26,8 +26,7 @@ export class ThreeDimensionalBoardDirective {
             console.log('Unable to intialize WebGL!  Your browser may not support it.');
         }
 
-        let manager = new WebGLManager(gl);
-        manager.initialize();
+        this.webglManagerService.gl = gl;
 
         this.$window.on('resize', this.resizeCanvas);
         $scope.$on('$destroy', () => {

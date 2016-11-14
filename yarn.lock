@@ -32,6 +32,10 @@
   version "2.0.34"
   resolved "https://registry.yarnpkg.com/@types/jquery/-/jquery-2.0.34.tgz#27615b369f30e572336126514e74672dda6e3d04"
 
+"@types/lodash":
+  version "4.14.38"
+  resolved "https://registry.yarnpkg.com/@types/lodash/-/lodash-4.14.38.tgz#fcbd51e740c5e260652cad975dd26c5c4151cb11"
+
 abbrev@1:
   version "1.0.9"
   resolved "https://registry.yarnpkg.com/abbrev/-/abbrev-1.0.9.tgz#91b4792588a7738c25f35dd6f63752a2f8776135"
@@ -1819,6 +1823,10 @@ loader-utils@^0.2.11, loader-utils@^0.2.15, loader-utils@^0.2.5, loader-utils@^0
     json5 "^0.5.0"
     object-assign "^4.0.1"
 
+lodash, lodash@^4.0.0, lodash@^4.5.0, lodash@~4.16.4:
+  version "4.16.6"
+  resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.16.6.tgz#d22c9ac660288f3843e16ba7d2b5d06cca27d777"
+
 lodash._basecopy@^3.0.0:
   version "3.0.1"
   resolved "https://registry.yarnpkg.com/lodash._basecopy/-/lodash._basecopy-3.0.1.tgz#8da0e6a876cf344c0ad8a54882111dd3c5c7ca36"
@@ -1945,10 +1953,6 @@ lodash.templatesettings@^3.0.0:
 lodash@^3.8.0:
   version "3.10.1"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-3.10.1.tgz#5bf45e8e49ba4189e17d482789dfd15bd140b7b6"
-
-lodash@^4.0.0, lodash@^4.5.0, lodash@~4.16.4:
-  version "4.16.6"
-  resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.16.6.tgz#d22c9ac660288f3843e16ba7d2b5d06cca27d777"
 
 lodash@~1.0.1:
   version "1.0.2"
