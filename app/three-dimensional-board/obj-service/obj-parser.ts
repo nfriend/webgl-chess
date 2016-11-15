@@ -113,3 +113,7 @@ export class ObjParser {
         return parsedObj;
     }
 }
+
+onmessage = ev => {
+    postMessage(ObjParser.parse(ev.data), undefined);
+}

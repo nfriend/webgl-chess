@@ -48,4 +48,10 @@ angular
     .service(WebGLManagerService.injectionName, WebGLManagerService)
     /* /yeoman:registrationBlock */
 
-    .config(['$stateProvider', '$urlRouterProvider', routeConfig]);
+    .config(['$stateProvider', '$urlRouterProvider', routeConfig])
+    .config(['$mdThemingProvider', ($mdThemingProvider: ng.material.IThemingProvider) => {
+        $mdThemingProvider.theme('default')
+            .primaryPalette('grey')
+            .accentPalette('orange')
+            .dark();
+    }]);

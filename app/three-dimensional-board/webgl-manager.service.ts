@@ -112,8 +112,8 @@ export class WebGLManagerService {
         this.projectionMatrix = makePerspective(45, 640.0 / 480.0, 0.1, 100.0);
         this.modelViewMatrix = Matrix.I(4);
 
-        this.mvTranslate([0.0, -1.0, -3.0]);
-        //this.mvRotate(this.cubeRotation, [1, 0, 1]);
+        this.mvTranslate([0.0, -1.5, -5.0]);
+        this.mvRotate(this.cubeRotation, [0, .1, 0]);
         this.mvTranslate([this.cubeXOffset, this.cubeYOffset, this.cubeZOffset]);
 
         this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.cubeVerticesBuffer);

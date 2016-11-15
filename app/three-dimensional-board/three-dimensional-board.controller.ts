@@ -4,12 +4,12 @@ import { WebGLManagerService } from './webgl-manager.service';
 
 export class ThreeDimensionalBoardController {
     public static injectionName = 'WebGLChess.ThreeDimensionalBoardService';
-    public static $inject = ['$log', '$timeout', ThreeDimensionalBoardService.injectionName, ObjService.injectionName, WebGLManagerService.injectionName];
+    public static $inject = ['$log', '$scope', '$timeout', ThreeDimensionalBoardService.injectionName, ObjService.injectionName, WebGLManagerService.injectionName];
 
-    constructor(private $log: ng.ILogService, private $timeout: ng.ITimeoutService, private threeDimensionalBoardService: ThreeDimensionalBoardService, private objService: ObjService, private webGLManagerService: WebGLManagerService) {
+    constructor(private $log: ng.ILogService, private $scope: ng.IScope, private $timeout: ng.ITimeoutService, private threeDimensionalBoardService: ThreeDimensionalBoardService, private objService: ObjService, private webGLManagerService: WebGLManagerService) {
     }
 
-    loadingValue = 0;
+    loadingValue;
     loadingText = '';
     loadingVisible = true;
 
@@ -17,7 +17,7 @@ export class ThreeDimensionalBoardController {
         this.objService.downloadObjs().then(() => {
             this.webGLManagerService.initialize();
         }, null, state => {
-            this.loadingValue = (state.current / state.total) * 100;
+            this.loadingValue = Math.floor((state.current / state.total) * 100);
             if (this.loadingValue === 100) {
                 this.loadingText = 'done!'
                 this.$timeout(1000).then(() => {

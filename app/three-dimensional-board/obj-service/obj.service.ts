@@ -1,4 +1,4 @@
-import { ObjParser, Obj } from './obj-parser';
+import { Obj } from './obj-parser';
 
 interface ObjectHolder {
     [objectName: string]: Obj
@@ -18,9 +18,12 @@ export class ObjService {
             [type: string]: string;
         }
     } = {
-        pawn: {
-            obj: 'assets/obj/pawn.obj'
-        }
+        pawn: { obj: 'assets/obj/pawn.obj' },
+        // knight: { obj: 'assets/obj/knight.obj' },
+        // rook: { obj: 'assets/obj/rook.obj' },
+        // bishop: { obj: 'assets/obj/bishop.obj' },
+        // queen: { obj: 'assets/obj/queen.obj' },
+        // king: { obj: 'assets/obj/king.obj' },
     };
 
     public downloadObjs(): ng.IPromise<any> {
@@ -56,11 +59,19 @@ export class ObjService {
 
     private downloadObj(key: string, type: string, filepath: string): ng.IPromise<void> {
         return this.$http.get(filepath).then(response => {
+            let deferred = this.$q.defer<void>();
             if (type === 'obj') {
-                this.objs[key] = ObjParser.parse(response.data + '');
+                let ObjectParserWorker = require('worker?inline!./obj-parser.ts');
+                let worker: Worker = new ObjectParserWorker();
+                worker.postMessage(response.data + '');
+                worker.onmessage = event => { 
+                    this.objs[key] = event.data;
+                    deferred.resolve();
+                };
             } else {
-                console.log('Download type not yet implemented: ' + type);
+                throw 'Download type not yet implemented: ' + type;
             }
+            return deferred.promise;
         });
     }
 }
