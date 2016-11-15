@@ -1,4 +1,6 @@
-import * as _ from 'lodash';
+// note: any dependencies imported here will be duplicated in the output
+// because this file runs independently in a Web Worker.  Use
+// discretion when adding dependencies.
 
 class Vector3 {
     x: number;
@@ -85,21 +87,21 @@ export class ObjParser {
         parsedObj.rawData.faces.forEach(rawFace => {
             rawFace.forEach(faceIndices => {
 
-                if (faceIndices.vertexIndex !== null && !_.isUndefined(faceIndices.vertexIndex)) {
+                if (faceIndices.vertexIndex !== null && typeof faceIndices.vertexIndex !== 'undefined') {
                     const rawCoord = parsedObj.rawData.vertices[faceIndices.vertexIndex - 1];
                     parsedObj.renderData.vertexCoords = parsedObj.renderData.vertexCoords.concat([rawCoord.x, rawCoord.y, rawCoord.z]);
                 } else {
                     throw `Error while parsing .obj file.  Face didn't provide a vertex index`;
                 }
 
-                if (faceIndices.normalIndex !== null && !_.isUndefined(faceIndices.normalIndex)) {
+                if (faceIndices.normalIndex !== null && typeof faceIndices.normalIndex !== 'undefined') {
                     const rawNormal = parsedObj.rawData.vertexNormals[faceIndices.normalIndex - 1];
                     parsedObj.renderData.vertexNormals = parsedObj.renderData.vertexNormals.concat([rawNormal.x, rawNormal.y, rawNormal.z]);
                 } else {
                     throw `Error while parsing .obj file.  Face didn't provide a vertex normal index`;
                 }
 
-                if (faceIndices.textureCoordIndex !== null && !_.isUndefined(faceIndices.textureCoordIndex)) {
+                if (faceIndices.textureCoordIndex !== null && typeof faceIndices.textureCoordIndex !== 'undefined') {
                     const rawTextureCoord = parsedObj.rawData.textureCoords[faceIndices.textureCoordIndex - 1];
                     parsedObj.renderData.textureCoords = parsedObj.renderData.textureCoords.concat([rawTextureCoord.u, rawTextureCoord.v]);
                 } else {

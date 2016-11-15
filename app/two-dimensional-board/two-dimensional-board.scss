@@ -86,7 +86,7 @@ $largeFontSize: 140px;
     }
 }
 
-@media (min-width: 1025px) and (max-width: 1600px) {
+@media (min-width: 1025px) and (max-width: 1700px) {
     .two-dimensional-board {
         .board {
             font-size: $mediumFontSize;
@@ -101,7 +101,7 @@ $largeFontSize: 140px;
     }
 }
 
-@media (min-width: 1601px) {
+@media (min-width: 1701px) {
     .two-dimensional-board {
         .board {
             font-size: $largeFontSize;
