@@ -52,6 +52,6 @@ angular
     .config(['$mdThemingProvider', ($mdThemingProvider: ng.material.IThemingProvider) => {
         $mdThemingProvider.theme('default')
             .primaryPalette('grey')
-            .accentPalette('orange')
-            .dark();
+            .accentPalette('orange');
+            //.dark();
     }]);
