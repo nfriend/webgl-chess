@@ -23,8 +23,9 @@ export class WebGLManagerService {
     private cubeXOffset = 0.0;
     private cubeYOffset = 0.0;
     private cubeZOffset = 0.0;
-    private perspectiveMatrix: Matrix;
-    private mvMatrix: Matrix;
+    private projectionMatrix: Matrix;
+    private modelViewMatrix: Matrix;
+    private normalMatrix: Matrix;
 
     constructor(private objService: ObjService) {
     }
@@ -72,57 +73,44 @@ export class WebGLManagerService {
 
         this.gl.useProgram(this.shaderProgram);
 
-        this.vertexPositionAttribute = this.gl.getAttribLocation(this.shaderProgram, 'aVertexPosition');
+        this.vertexPositionAttribute = this.gl.getAttribLocation(this.shaderProgram, 'vertexPosition');
         this.gl.enableVertexAttribArray(this.vertexPositionAttribute);
-        this.vertexColorAttribute = this.gl.getAttribLocation(this.shaderProgram, 'aVertexColor');
+        this.vertexColorAttribute = this.gl.getAttribLocation(this.shaderProgram, 'vertexColor');
         this.gl.enableVertexAttribArray(this.vertexColorAttribute);
-        this.vertexNormalAttribute = this.gl.getAttribLocation(this.shaderProgram, 'aVertexNormal');
+        this.vertexNormalAttribute = this.gl.getAttribLocation(this.shaderProgram, 'vertexNormal');
         this.gl.enableVertexAttribArray(this.vertexNormalAttribute);
     }
 
     private initializeBuffers() {
+
+        const colors = [];
+        for (var i = 0; i < this.objService.objs['pawn'].renderData.vertexCoords.length / 3 * 4; i++) {
+            colors.push(0.0);
+        }
+
         this.cubeVerticesBuffer = this.gl.createBuffer();
         this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.cubeVerticesBuffer);
-        const vertices = _.flatten(this.objService.objs['pawn'].vertices.map(v => [v.x, v.y, v.z]));
-        this.gl.bufferData(this.gl.ARRAY_BUFFER, new Float32Array(vertices), this.gl.STATIC_DRAW);
-
-        console.log(vertices)
-
-        let generatedColors = [];
-        for (var i = 0; i < vertices.length * 3; i++) {
-            generatedColors = generatedColors.concat([0.0, 0.0, 0.0, 0.0]);
-        };
+        this.gl.bufferData(this.gl.ARRAY_BUFFER, new Float32Array(this.objService.objs['pawn'].renderData.vertexCoords), this.gl.STATIC_DRAW);
 
         this.cubeVerticesColorBuffer = this.gl.createBuffer();
         this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.cubeVerticesColorBuffer);
-        this.gl.bufferData(this.gl.ARRAY_BUFFER, new Float32Array(generatedColors), this.gl.STATIC_DRAW);
+        this.gl.bufferData(this.gl.ARRAY_BUFFER, new Float32Array(colors), this.gl.STATIC_DRAW);
 
         this.cubeVerticesNormalBuffer = this.gl.createBuffer();
         this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.cubeVerticesNormalBuffer);
-        const normals = _.flatten(this.objService.objs['pawn'].vertexNormals.map(v => [v.x, v.y, v.z]));
-        this.gl.bufferData(this.gl.ARRAY_BUFFER, new Float32Array(normals), this.gl.STATIC_DRAW);
-
-        console.log(normals)
+        this.gl.bufferData(this.gl.ARRAY_BUFFER, new Float32Array(this.objService.objs['pawn'].renderData.vertexNormals), this.gl.STATIC_DRAW);
 
         this.cubeVerticesIndexBuffer = this.gl.createBuffer();
         this.gl.bindBuffer(this.gl.ELEMENT_ARRAY_BUFFER, this.cubeVerticesIndexBuffer);
-
-        const cubeVertexIndices = [];
-        this.objService.objs['pawn'].faces.forEach(f => {
-            f.vertices.forEach(v => {
-                cubeVertexIndices.push(v.vertexIndex - 1);
-            });
-        });
-
-        this.gl.bufferData(this.gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(cubeVertexIndices), this.gl.STATIC_DRAW);
+        this.gl.bufferData(this.gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(this.objService.objs['pawn'].renderData.vertexIndices), this.gl.STATIC_DRAW);
     }
 
     private drawScene() {
 
         this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
 
-        this.perspectiveMatrix = makePerspective(45, 640.0 / 480.0, 0.1, 100.0);
-        this.mvMatrix = Matrix.I(4);
+        this.projectionMatrix = makePerspective(45, 640.0 / 480.0, 0.1, 100.0);
+        this.modelViewMatrix = Matrix.I(4);
 
         this.mvTranslate([0.0, -1.0, -3.0]);
         //this.mvRotate(this.cubeRotation, [1, 0, 1]);
@@ -136,17 +124,20 @@ export class WebGLManagerService {
         this.gl.vertexAttribPointer(this.vertexNormalAttribute, 3, this.gl.FLOAT, false, 0, 0);
         this.gl.bindBuffer(this.gl.ELEMENT_ARRAY_BUFFER, this.cubeVerticesIndexBuffer);
 
-        var pUniform = this.gl.getUniformLocation(this.shaderProgram, "uPMatrix");
-        this.gl.uniformMatrix4fv(pUniform, false, new Float32Array(this.perspectiveMatrix.flatten()));
+        let projectionUniform = this.gl.getUniformLocation(this.shaderProgram, "projectionMatrix");
+        this.gl.uniformMatrix4fv(projectionUniform, false, new Float32Array(this.projectionMatrix.flatten()));
 
-        var mvUniform = this.gl.getUniformLocation(this.shaderProgram, "uMVMatrix");
-        this.gl.uniformMatrix4fv(mvUniform, false, new Float32Array(this.mvMatrix.flatten()));
+        let modelViewUniform = this.gl.getUniformLocation(this.shaderProgram, "modelViewMatrix");
+        this.gl.uniformMatrix4fv(modelViewUniform, false, new Float32Array(this.modelViewMatrix.flatten()));
 
-        this.gl.drawElements(this.gl.TRIANGLES, this.objService.objs['pawn'].faces.length * 3, this.gl.UNSIGNED_SHORT, 0);
+        let normalUniform = this.gl.getUniformLocation(this.shaderProgram, "normalMatrix");
+        this.gl.uniformMatrix4fv(normalUniform, false, new Float32Array(this.modelViewMatrix.inverse().transpose().flatten()));
+
+        this.gl.drawElements(this.gl.TRIANGLES, this.objService.objs['pawn'].rawData.faces.length * 3, this.gl.UNSIGNED_SHORT, 0);
     }
 
     private multMatrix(m) {
-        this.mvMatrix = this.mvMatrix.x(m);
+        this.modelViewMatrix = this.modelViewMatrix.x(m);
     }
 
     private mvTranslate(v) {
@@ -154,9 +145,9 @@ export class WebGLManagerService {
     }
 
     private mvRotate(angle, v) {
-        var inRadians = angle * Math.PI / 180.0;
+        let inRadians = angle * Math.PI / 180.0;
 
-        var m = Matrix.Rotation(inRadians, $V([v[0], v[1], v[2]])).ensure4x4();
+        let m = Matrix.Rotation(inRadians, $V([v[0], v[1], v[2]])).ensure4x4();
         this.multMatrix(m);
     }
 

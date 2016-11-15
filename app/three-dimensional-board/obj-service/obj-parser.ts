@@ -1,31 +1,49 @@
-export class Vertex {
-    constructor(public x: number, public y: number, public z: number) { }
+import * as _ from 'lodash';
+
+class Vector3 {
+    x: number;
+    y: number;
+    z: number;
 }
 
-export class TextureCoord {
-    constructor(public u: number, public v: number) { }
+class Vertex {
+    coord: Vector3;
+    normal: Vector3;
+    textureCoord: { u: number; v: number; };
+    originalIndex: number;
 }
 
-export class VertexNormal {
-    constructor(public x: number, public y: number, public z: number) { }
+class Face {
+    vertices: Vertex[] = [];
 }
 
-export class Face {
-    vertices: Array<{
+// holds the parsed data in a structure similar 
+// to the original .obj file
+class ObjRawData {
+    comments: string[] = [];
+    vertices: Vector3[] = [];
+    textureCoords: { u: number; v: number; }[] = [];
+    vertexNormals: Vector3[] = [];
+    faces: {
         vertexIndex: number;
         textureCoordIndex: number;
         normalIndex: number;
-    }> = [];
+    }[][] = [];
+    unknown: string[] = [];
+}
+
+// hold the parsed data in a format
+// consumable by WebGL
+class ObjRenderData {
+    vertexCoords: number[] = [];
+    vertexNormals: number[] = [];
+    textureCoords: number[] = [];
+    vertexIndices: number[] = [];
 }
 
 export class Obj {
-    comments: string[] = [];
-    vertices: Vertex[] = [];
-    textureCoords: TextureCoord[] = [];
-    vertexNormals: VertexNormal[] = [];
-    faces: Face[] = [];
-
-    unknown: string[] = [];
+    rawData = new ObjRawData();
+    renderData = new ObjRenderData();
 }
 
 export class ObjParser {
@@ -33,33 +51,63 @@ export class ObjParser {
         const parsedObj = new Obj();
         const lines = objText.split(/\r?\n/);
 
+        // first, populate all the "raw data" properties on this Obj object
         lines.forEach(line => {
             const lp = line.split(/\s+/);
             if (lp[0] === 'v') {
-                parsedObj.vertices.push(new Vertex(parseFloat(lp[1]), parseFloat(lp[2]), parseFloat(lp[3])));
+                parsedObj.rawData.vertices.push({ x: parseFloat(lp[1]), y: parseFloat(lp[2]), z: parseFloat(lp[3]) });
             } else if (lp[0] === 'vt') {
-                parsedObj.textureCoords.push(new TextureCoord(parseFloat(lp[1]), parseFloat(lp[2])));
+                parsedObj.rawData.textureCoords.push({ u: parseFloat(lp[1]), v: parseFloat(lp[2]) });
             } else if (lp[0] === 'vn') {
-                parsedObj.vertexNormals.push(new VertexNormal(parseFloat(lp[1]), parseFloat(lp[2]), parseFloat(lp[3])));
+                parsedObj.rawData.vertexNormals.push({ x: parseFloat(lp[1]), y: parseFloat(lp[2]), z: parseFloat(lp[3]) });
             } else if (lp[0] === 'f') {
-                const face = new Face();
+                parsedObj.rawData.faces.push([]);
                 lp.slice(1).forEach(fp => {
-                    const fvp = fp.split(/\//); 
+                    const fvp = fp.split(/\//);
                     const vertexIndex = parseInt(fvp[0], 10);
                     const textureCoordIndex = parseInt(fvp[1], 10);
                     const normalIndex = parseInt(fvp[2], 10);
-                    face.vertices.push({
+                    parsedObj.rawData.faces[parsedObj.rawData.faces.length - 1].push({
                         vertexIndex: isNaN(vertexIndex) ? null : vertexIndex,
                         textureCoordIndex: isNaN(textureCoordIndex) ? null : textureCoordIndex,
                         normalIndex: isNaN(normalIndex) ? null : normalIndex
                     });
                 });
-                parsedObj.faces.push(face);
             } else if (/^#/.test(lp[0])) {
-                parsedObj.comments.push(line);
+                parsedObj.rawData.comments.push(line);
             } else {
-                parsedObj.unknown.push(line);
+                parsedObj.rawData.unknown.push(line);
             }
+        });
+
+        // then, rearrange the data into a more consumable, WebGL-friendly format
+        let vertexIndex = 0;
+        parsedObj.rawData.faces.forEach(rawFace => {
+            rawFace.forEach(faceIndices => {
+
+                if (faceIndices.vertexIndex !== null && !_.isUndefined(faceIndices.vertexIndex)) {
+                    const rawCoord = parsedObj.rawData.vertices[faceIndices.vertexIndex - 1];
+                    parsedObj.renderData.vertexCoords = parsedObj.renderData.vertexCoords.concat([rawCoord.x, rawCoord.y, rawCoord.z]);
+                } else {
+                    throw `Error while parsing .obj file.  Face didn't provide a vertex index`;
+                }
+
+                if (faceIndices.normalIndex !== null && !_.isUndefined(faceIndices.normalIndex)) {
+                    const rawNormal = parsedObj.rawData.vertexNormals[faceIndices.normalIndex - 1];
+                    parsedObj.renderData.vertexNormals = parsedObj.renderData.vertexNormals.concat([rawNormal.x, rawNormal.y, rawNormal.z]);
+                } else {
+                    throw `Error while parsing .obj file.  Face didn't provide a vertex normal index`;
+                }
+
+                if (faceIndices.textureCoordIndex !== null && !_.isUndefined(faceIndices.textureCoordIndex)) {
+                    const rawTextureCoord = parsedObj.rawData.textureCoords[faceIndices.textureCoordIndex - 1];
+                    parsedObj.renderData.textureCoords = parsedObj.renderData.textureCoords.concat([rawTextureCoord.u, rawTextureCoord.v]);
+                } else {
+                    parsedObj.renderData.textureCoords = parsedObj.renderData.textureCoords.concat([0.0, 0.0]);
+                }
+
+                parsedObj.renderData.vertexIndices.push(vertexIndex++);
+            });
         });
 
         return parsedObj;
