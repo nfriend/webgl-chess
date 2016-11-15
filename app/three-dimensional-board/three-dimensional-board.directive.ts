@@ -28,9 +28,9 @@ export class ThreeDimensionalBoardDirective {
 
         this.webglManagerService.gl = gl;
 
-        this.$window.on('resize', this.resizeCanvas);
+        this.$window.on('resize', this.onWindowResize);
         $scope.$on('$destroy', () => {
-            this.$window.off('resize', this.resizeCanvas);
+            this.$window.off('resize', this.onWindowResize);
         });
     }
 
@@ -39,7 +39,11 @@ export class ThreeDimensionalBoardDirective {
         const height = this.$window.outerHeight();
         this.canvas.width = width;
         this.canvas.height = height;
-        // this.canvas.style.width = width + 'px';
-        // this.canvas.style.height = height + 'px';   
+        return { width, height };
+    }   
+
+    private onWindowResize = () => {
+        const { width, height } = this.resizeCanvas();
+        this.webglManagerService.resize(width, height);   
     }
 }

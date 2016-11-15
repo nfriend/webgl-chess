@@ -27,6 +27,9 @@ export class WebGLManagerService {
     private modelViewMatrix: Matrix;
     private normalMatrix: Matrix;
 
+    private width: number;
+    private height: number;
+
     constructor(private objService: ObjService) {
     }
 
@@ -34,6 +37,10 @@ export class WebGLManagerService {
         if (!this.gl) {
             throw WebGLManagerService.injectionName + ` must have its "gl" property set before calling initialize();`;
         }
+
+        const viewPort = this.gl.getParameter(this.gl.VIEWPORT);
+        this.width = viewPort[2];
+        this.height = viewPort[3];
 
         this.gl.clearColor(0.0, 0.0, 0.0, 1.0); // Set clear color to black, fully opaque
         this.gl.enable(this.gl.DEPTH_TEST); // Enable depth testing
@@ -43,6 +50,13 @@ export class WebGLManagerService {
         this.initializeShaders();
         this.initializeBuffers();
 
+        this.drawScene();
+    }
+
+    public resize(width: number, height: number) {
+        this.width = width;
+        this.height = height;
+        this.gl.viewport(0, 0, width, height);
         this.drawScene();
     }
 
@@ -109,7 +123,7 @@ export class WebGLManagerService {
 
         this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
 
-        this.projectionMatrix = makePerspective(45, 640.0 / 480.0, 0.1, 100.0);
+        this.projectionMatrix = makePerspective(45, this.width / this.height, 0.1, 100.0);
         this.modelViewMatrix = Matrix.I(4);
 
         this.mvTranslate([0.0, -1.5, -5.0]);
