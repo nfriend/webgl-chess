@@ -2,6 +2,7 @@ import { ObjService } from './obj-service/obj.service';
 import * as _ from 'lodash';
 import { ChessBoardService } from './objects/chessboard.service';
 import { Utility } from '../utility/utility';
+import { CameraControls } from './camera-controls';
 
 const vertexShader = require('raw!./shaders/shader.vs');
 const fragmentShader = require('raw!./shaders/shader.fs');
@@ -27,6 +28,7 @@ export class WebGLManagerService {
 
     private width: number;
     private height: number;
+    private cameraControls = new CameraControls();
 
     constructor(private objService: ObjService, private chessBoard: ChessBoardService) {
     }
@@ -75,7 +77,7 @@ export class WebGLManagerService {
         this.chessBoard.initializeShaders();
         this.chessBoard.initializeBuffers();
 
-        this.modelViewMatrix = Matrix.I(4);
+        this.cameraControls.startListening(angular.element(document));
 
         this.animate();
     }
@@ -86,20 +88,11 @@ export class WebGLManagerService {
         this.gl.viewport(0, 0, width, height);
     }
 
-    private rotation: number = 0;
-
     private drawScene() {
+        this.cameraControls.update();
         this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
-
         this.projectionMatrix = makePerspective(45, this.width / this.height, 0.1, 100.0);
-
-        this.rotation += .5;
-
-        this.modelViewMatrix = Matrix.I(4)
-            .multiply(Matrix.Translation($V([0, 0, -25])).ensure4x4())
-            .multiply(Matrix.RotationX(Utility.degreesToRadians(45)).ensure4x4())
-            .multiply(Matrix.RotationY(Utility.degreesToRadians(this.rotation)).ensure4x4());
-
+        this.modelViewMatrix = this.cameraControls.getViewMatrix();
         this.chessBoard.draw(this.projectionMatrix, this.modelViewMatrix, this.modelViewMatrix.inverse().transpose());
     }
 
