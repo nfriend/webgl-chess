@@ -19,11 +19,12 @@ export class ObjService {
         }
     } = {
         pawn: { obj: 'assets/obj/pawn.obj' },
-        // knight: { obj: 'assets/obj/knight.obj' },
-        // rook: { obj: 'assets/obj/rook.obj' },
-        // bishop: { obj: 'assets/obj/bishop.obj' },
-        // queen: { obj: 'assets/obj/queen.obj' },
-        // king: { obj: 'assets/obj/king.obj' },
+        knight: { obj: 'assets/obj/knight.obj' },
+        rook: { obj: 'assets/obj/rook.obj' },
+        bishop: { obj: 'assets/obj/bishop.obj' },
+        queen: { obj: 'assets/obj/queen.obj' },
+        king: { obj: 'assets/obj/king.obj' },
+        square: { obj: 'assets/obj/square.obj' }
     };
 
     public downloadObjs(): ng.IPromise<any> {

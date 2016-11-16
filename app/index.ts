@@ -22,6 +22,7 @@ import { ThreeDimensionalBoardController } from './three-dimensional-board/three
 import { ThreeDimensionalBoardService } from './three-dimensional-board/three-dimensional-board.service';
 import { ObjService } from './three-dimensional-board/obj-service/obj.service';
 import { WebGLManagerService } from './three-dimensional-board/webgl-manager.service';
+import { ChessBoardService } from './three-dimensional-board/objects/chessboard.service';
 /* /yeoman:importBlock */
 
 angular
@@ -46,6 +47,7 @@ angular
     .service(ThreeDimensionalBoardService.injectionName, ThreeDimensionalBoardService)
     .service(ObjService.injectionName, ObjService)
     .service(WebGLManagerService.injectionName, WebGLManagerService)
+    .service(ChessBoardService.injectionName, ChessBoardService)
     /* /yeoman:registrationBlock */
 
     .config(['$stateProvider', '$urlRouterProvider', routeConfig])
