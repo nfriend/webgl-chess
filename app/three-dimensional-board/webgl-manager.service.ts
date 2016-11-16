@@ -3,6 +3,7 @@ import * as _ from 'lodash';
 import { ChessBoardService } from './objects/chessboard.service';
 import { Utility } from '../utility/utility';
 import { CameraControls } from './camera-controls';
+import { StatsService } from '../stats/stats.service';
 
 const vertexShader = require('raw!./shaders/shader.vs');
 const fragmentShader = require('raw!./shaders/shader.fs');
@@ -10,7 +11,7 @@ const fragmentShader = require('raw!./shaders/shader.fs');
 export class WebGLManagerService {
 
     public static injectionName = 'WebGLChess.WebGLManagerService';
-    public static $inject = [ObjService.injectionName, ChessBoardService.injectionName];
+    public static $inject = [ObjService.injectionName, ChessBoardService.injectionName, StatsService.injectionName];
 
     public gl: WebGLRenderingContext;
 
@@ -30,7 +31,7 @@ export class WebGLManagerService {
     private height: number;
     private cameraControls = new CameraControls();
 
-    constructor(private objService: ObjService, private chessBoard: ChessBoardService) {
+    constructor(private objService: ObjService, private chessBoard: ChessBoardService, private statsService: StatsService) {
     }
 
     public initialize() {
@@ -97,7 +98,9 @@ export class WebGLManagerService {
     }
 
     private animate() {
+        this.statsService.statInstance.begin();
         this.drawScene();
+        this.statsService.statInstance.end();
         requestAnimationFrame(() => {
             this.animate();
         });

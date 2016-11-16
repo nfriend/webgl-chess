@@ -18,7 +18,7 @@ export class ThreeDimensionalBoardDirective {
     }
 
     public link = ($scope: ng.IScope, $element: JQuery, attrs: ng.IAttributes, ctrl: ThreeDimensionalBoardController) => {
-        this.canvas = <HTMLCanvasElement>$element.find('canvas')[0];
+        this.canvas = <HTMLCanvasElement>$element.find('canvas.chessboard-canvas')[0];
         this.resizeCanvas();
         const gl = this.canvas.getContext('webgl') || this.canvas.getContext('experimental-webgl');
 

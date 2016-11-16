@@ -7,6 +7,7 @@ import 'angular-ui-router';
 require('script!../node_modules/chess.js/chess.min.js');
 require('script!./third-party/sylvester.min.js');
 require('script!./third-party/glUtils.min.js');
+require('script!./third-party/stats.min.js');
 
 /* yeoman:importBlock */
 import { routeConfig } from './config/routes';
@@ -23,6 +24,9 @@ import { ThreeDimensionalBoardService } from './three-dimensional-board/three-di
 import { ObjService } from './three-dimensional-board/obj-service/obj.service';
 import { WebGLManagerService } from './three-dimensional-board/webgl-manager.service';
 import { ChessBoardService } from './three-dimensional-board/objects/chessboard.service';
+import { StatsDirective } from './stats/stats.directive';
+import { StatsController } from './stats/stats.controller';
+import { StatsService } from './stats/stats.service';
 /* /yeoman:importBlock */
 
 angular
@@ -48,6 +52,9 @@ angular
     .service(ObjService.injectionName, ObjService)
     .service(WebGLManagerService.injectionName, WebGLManagerService)
     .service(ChessBoardService.injectionName, ChessBoardService)
+    .directive(StatsDirective.injectionName, [StatsService.injectionName, (ss: StatsService) => new StatsDirective(ss)])
+    .controller(StatsController.injectionName, StatsController)
+    .service(StatsService.injectionName, StatsService)
     /* /yeoman:registrationBlock */
 
     .config(['$stateProvider', '$urlRouterProvider', routeConfig])
