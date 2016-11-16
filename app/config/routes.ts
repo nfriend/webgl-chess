@@ -18,7 +18,7 @@ const routeConfig = ($stateProvider: ng.ui.IStateProvider, $urlRouterProvider: n
         template: '<main-layout board-to-show="2d"></main-layout>'
     });
 
-    $urlRouterProvider.otherwise('/2d');
+    $urlRouterProvider.otherwise('/3d');
 }
 
 export { routeConfig };
