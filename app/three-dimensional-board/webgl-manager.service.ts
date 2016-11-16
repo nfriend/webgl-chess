@@ -94,7 +94,7 @@ export class WebGLManagerService {
         this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
         this.projectionMatrix = makePerspective(45, this.width / this.height, 0.1, 100.0);
         this.modelViewMatrix = this.cameraControls.getViewMatrix();
-        this.chessBoard.draw(this.projectionMatrix, this.modelViewMatrix, this.modelViewMatrix.inverse().transpose());
+        this.chessBoard.draw(this.projectionMatrix, this.modelViewMatrix);
     }
 
     private animate() {

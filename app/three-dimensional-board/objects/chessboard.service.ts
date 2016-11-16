@@ -71,9 +71,9 @@ export class ChessBoardService {
         });
     }
 
-    public draw(projection: Matrix, modelView: Matrix, normal: Matrix) {
+    public draw(projection: Matrix, modelView: Matrix) {
         this.pieces.forEach(p => {
-            p.draw(projection, modelView, normal);
+            p.draw(projection, modelView);
         });
     }
 }

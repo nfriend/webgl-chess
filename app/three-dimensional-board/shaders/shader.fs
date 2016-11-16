@@ -6,7 +6,7 @@ varying vec4 passedVertexColor;
 const vec3 lightPos = vec3(-1.0, 1.0, 1.0);
 const vec3 diffuseColor = vec3(0.5, 0.5, 0.5);
 const vec3 specColor = vec3(1.0, 1.0, 1.0);
-const vec3 ambientColor = vec3(0.3, 0.3, 0.3);
+const vec3 ambientColor = vec3(0.02, 0.02, 0.02);
 
 void main() {
 
@@ -28,5 +28,5 @@ void main() {
         specular = pow(specAngle, 16.0);
     }
 
-    gl_FragColor = passedVertexColor + vec4(lambertian * diffuseColor + specular * specColor + ambientColor, 1.0);
+    gl_FragColor = passedVertexColor * .5  + vec4((lambertian * diffuseColor * .1) + specular * specColor, 1.0);
 }

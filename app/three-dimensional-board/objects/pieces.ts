@@ -32,7 +32,7 @@ export abstract class ChessPiece {
 
         const colors = [];
         for (var i = 0; i < this.obj.renderData.vertexCoords.length / 3 * 4; i++) {
-            colors.push(0.0);
+            colors.push(this.color === PieceColor.Black ? 0.0 : 1.0);
         }
 
         this.vertexPositionBuffer = this.gl.createBuffer();
@@ -52,7 +52,7 @@ export abstract class ChessPiece {
         this.gl.bufferData(this.gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(this.obj.renderData.vertexIndices), this.gl.STATIC_DRAW);
     }
 
-    public draw(projection: Matrix, modelView: Matrix, normal: Matrix) {
+    public draw(projection: Matrix, modelView: Matrix) {
         this.gl.useProgram(this.shaderProgram);
 
         this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.vertexPositionBuffer);
@@ -72,7 +72,7 @@ export abstract class ChessPiece {
         this.gl.uniformMatrix4fv(modelViewUniform, false, new Float32Array(translatedMatrix.flatten()));
 
         let normalUniform = this.gl.getUniformLocation(this.shaderProgram, 'normalMatrix');
-        this.gl.uniformMatrix4fv(normalUniform, false, new Float32Array(normal.flatten()));
+        this.gl.uniformMatrix4fv(normalUniform, false, new Float32Array(translatedMatrix.inverse().transpose().flatten()));
 
         this.gl.drawElements(this.gl.TRIANGLES, this.obj.rawData.faces.length * 3, this.gl.UNSIGNED_SHORT, 0);
     }
