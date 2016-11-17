@@ -33,10 +33,7 @@ export abstract class BaseObject {
 
         let colors = [];
         for (var i = 0; i < this.obj.renderData.vertexCoords.length / 3; i++) {
-            colors.push(this.color.r);
-            colors.push(this.color.g);
-            colors.push(this.color.b);
-            colors.push(this.color.a);
+            colors.push(this.color.r, this.color.g, this.color.b, this.color.a);
         }
 
         this.vertexPositionBuffer = this.gl.createBuffer();

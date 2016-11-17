@@ -89,23 +89,23 @@ export class ObjParser {
 
                 if (faceIndices.vertexIndex !== null && typeof faceIndices.vertexIndex !== 'undefined') {
                     const rawCoord = parsedObj.rawData.vertices[faceIndices.vertexIndex - 1];
-                    parsedObj.renderData.vertexCoords = parsedObj.renderData.vertexCoords.concat([rawCoord.x, rawCoord.y, rawCoord.z]);
+                    parsedObj.renderData.vertexCoords.push(rawCoord.x, rawCoord.y, rawCoord.z);
                 } else {
                     throw `Error while parsing .obj file.  Face didn't provide a vertex index`;
                 }
 
                 if (faceIndices.normalIndex !== null && typeof faceIndices.normalIndex !== 'undefined') {
                     const rawNormal = parsedObj.rawData.vertexNormals[faceIndices.normalIndex - 1];
-                    parsedObj.renderData.vertexNormals = parsedObj.renderData.vertexNormals.concat([rawNormal.x, rawNormal.y, rawNormal.z]);
+                    parsedObj.renderData.vertexNormals.push(rawNormal.x, rawNormal.y, rawNormal.z);
                 } else {
                     throw `Error while parsing .obj file.  Face didn't provide a vertex normal index`;
                 }
 
                 if (faceIndices.textureCoordIndex !== null && typeof faceIndices.textureCoordIndex !== 'undefined') {
                     const rawTextureCoord = parsedObj.rawData.textureCoords[faceIndices.textureCoordIndex - 1];
-                    parsedObj.renderData.textureCoords = parsedObj.renderData.textureCoords.concat([rawTextureCoord.u, rawTextureCoord.v]);
+                    parsedObj.renderData.textureCoords.push(rawTextureCoord.u, rawTextureCoord.v)
                 } else {
-                    parsedObj.renderData.textureCoords = parsedObj.renderData.textureCoords.concat([0.0, 0.0]);
+                    parsedObj.renderData.textureCoords.push(0.0, 0.0);
                 }
 
                 parsedObj.renderData.vertexIndices.push(vertexIndex++);
