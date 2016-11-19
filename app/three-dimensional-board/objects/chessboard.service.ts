@@ -3,6 +3,9 @@ import { ObjService } from '../obj-service/obj.service';
 import { Utility } from '../../utility/utility';
 import { Square } from './square';
 import { BaseObject } from './base-object';
+import { squareToCoordsMap } from '../square-to-coords-map';
+
+console.log(squareToCoordsMap)
 
 export class ChessBoardService {
 
@@ -27,22 +30,22 @@ export class ChessBoardService {
     private initPieces() {
 
         // black
-        for (var i = 0; i < 8; i++) {
-            this.pieces.push(new Pieces.Pawn(this.gl, this.shaderProgram, $V([-7 + (i * 2), 0, -5]), this.objService.objs['pawn'], Pieces.PieceTeam.Black));
-        }
+        ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'].forEach(letter => {
+            this.pieces.push(new Pieces.Pawn(this.gl, this.shaderProgram, this.objService.objs['pawn'], Pieces.PieceTeam.Black, letter + '7'));
+        });
 
-        this.pieces.push(new Pieces.Rook(this.gl, this.shaderProgram, $V([-7, 0, -7]), this.objService.objs['rook'], Pieces.PieceTeam.Black));
-        this.pieces.push(new Pieces.Rook(this.gl, this.shaderProgram, $V([7, 0, -7]), this.objService.objs['rook'], Pieces.PieceTeam.Black));
+        this.pieces.push(new Pieces.Rook(this.gl, this.shaderProgram, this.objService.objs['rook'], Pieces.PieceTeam.Black, 'a8'));
+        this.pieces.push(new Pieces.Rook(this.gl, this.shaderProgram, this.objService.objs['rook'], Pieces.PieceTeam.Black, 'h8'));
 
-        this.pieces.push(new Pieces.Knight(this.gl, this.shaderProgram, $V([-5, 0, -7]), this.objService.objs['knight'], Pieces.PieceTeam.Black));
-        this.pieces.push(new Pieces.Knight(this.gl, this.shaderProgram, $V([5, 0, -7]), this.objService.objs['knight'], Pieces.PieceTeam.Black));
+        this.pieces.push(new Pieces.Knight(this.gl, this.shaderProgram, this.objService.objs['knight'], Pieces.PieceTeam.Black, 'b8'));
+        this.pieces.push(new Pieces.Knight(this.gl, this.shaderProgram, this.objService.objs['knight'], Pieces.PieceTeam.Black, 'g8'));
 
-        this.pieces.push(new Pieces.Bishop(this.gl, this.shaderProgram, $V([-3, 0, -7]), this.objService.objs['bishop'], Pieces.PieceTeam.Black));
-        this.pieces.push(new Pieces.Bishop(this.gl, this.shaderProgram, $V([3, 0, -7]), this.objService.objs['bishop'], Pieces.PieceTeam.Black));
+        this.pieces.push(new Pieces.Bishop(this.gl, this.shaderProgram, this.objService.objs['bishop'], Pieces.PieceTeam.Black, 'c8'));
+        this.pieces.push(new Pieces.Bishop(this.gl, this.shaderProgram, this.objService.objs['bishop'], Pieces.PieceTeam.Black, 'f8'));
 
-        this.pieces.push(new Pieces.Queen(this.gl, this.shaderProgram, $V([-1, 0, -7]), this.objService.objs['queen'], Pieces.PieceTeam.Black));
+        this.pieces.push(new Pieces.Queen(this.gl, this.shaderProgram, this.objService.objs['queen'], Pieces.PieceTeam.Black, 'd8'));
 
-        this.pieces.push(new Pieces.King(this.gl, this.shaderProgram, $V([1, 0, -7]), this.objService.objs['king'], Pieces.PieceTeam.Black));
+        this.pieces.push(new Pieces.King(this.gl, this.shaderProgram, this.objService.objs['king'], Pieces.PieceTeam.Black, 'e8'));
 
         // all black pieces should be colored black and rotated 180 degrees
         this.pieces.forEach(p => {
@@ -51,31 +54,30 @@ export class ChessBoardService {
         });
 
         // white
-        for (var i = 0; i < 8; i++) {
-            this.pieces.push(new Pieces.Pawn(this.gl, this.shaderProgram, $V([-7 + (i * 2), 0, 5]), this.objService.objs['pawn'], Pieces.PieceTeam.White));
-        }
+        ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'].forEach(letter => {
+            this.pieces.push(new Pieces.Pawn(this.gl, this.shaderProgram, this.objService.objs['pawn'], Pieces.PieceTeam.White, letter + '2'));
+        });
 
-        this.pieces.push(new Pieces.Rook(this.gl, this.shaderProgram, $V([-7, 0, 7]), this.objService.objs['rook'], Pieces.PieceTeam.White));
-        this.pieces.push(new Pieces.Rook(this.gl, this.shaderProgram, $V([7, 0, 7]), this.objService.objs['rook'], Pieces.PieceTeam.White));
+        this.pieces.push(new Pieces.Rook(this.gl, this.shaderProgram, this.objService.objs['rook'], Pieces.PieceTeam.White, 'a1'));
+        this.pieces.push(new Pieces.Rook(this.gl, this.shaderProgram, this.objService.objs['rook'], Pieces.PieceTeam.White, 'h1'));
 
-        this.pieces.push(new Pieces.Knight(this.gl, this.shaderProgram, $V([-5, 0, 7]), this.objService.objs['knight'], Pieces.PieceTeam.White));
-        this.pieces.push(new Pieces.Knight(this.gl, this.shaderProgram, $V([5, 0, 7]), this.objService.objs['knight'], Pieces.PieceTeam.White));
+        this.pieces.push(new Pieces.Knight(this.gl, this.shaderProgram, this.objService.objs['knight'], Pieces.PieceTeam.White, 'b1'));
+        this.pieces.push(new Pieces.Knight(this.gl, this.shaderProgram, this.objService.objs['knight'], Pieces.PieceTeam.White, 'g1'));
 
-        this.pieces.push(new Pieces.Bishop(this.gl, this.shaderProgram, $V([-3, 0, 7]), this.objService.objs['bishop'], Pieces.PieceTeam.White));
-        this.pieces.push(new Pieces.Bishop(this.gl, this.shaderProgram, $V([3, 0, 7]), this.objService.objs['bishop'], Pieces.PieceTeam.White));
+        this.pieces.push(new Pieces.Bishop(this.gl, this.shaderProgram, this.objService.objs['bishop'], Pieces.PieceTeam.White, 'c1'));
+        this.pieces.push(new Pieces.Bishop(this.gl, this.shaderProgram, this.objService.objs['bishop'], Pieces.PieceTeam.White, 'f1'));
 
-        this.pieces.push(new Pieces.Queen(this.gl, this.shaderProgram, $V([-1, 0, 7]), this.objService.objs['queen'], Pieces.PieceTeam.White));
+        this.pieces.push(new Pieces.Queen(this.gl, this.shaderProgram, this.objService.objs['queen'], Pieces.PieceTeam.White, 'd1'));
 
-        this.pieces.push(new Pieces.King(this.gl, this.shaderProgram, $V([1, 0, 7]), this.objService.objs['king'], Pieces.PieceTeam.White));
+        this.pieces.push(new Pieces.King(this.gl, this.shaderProgram, this.objService.objs['king'], Pieces.PieceTeam.White, 'e1'));
 
         // squares
-        for (var i = 0; i < 8; i++) {
-            for (var j = 0; j < 8; j++) {
-                const location = $V([-7 + 2 * i, 0, -7 + 2 * j]);
-                const square = new Square(this.gl, this.shaderProgram, location, this.objService.objs['square']);
-                square.color = (i + j) % 2 === 0 ? { r: 1, g: 1, b: 1, a: 1 } : { r: 0, g: 0, b: 0, a: 1 };
+        for (let number = 8; number > 0; number--) {
+            ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'].forEach((letter, letterIndex) => {
+                const color = (number + letterIndex) % 2 === 0 ?  { r: 1, g: 1, b: 1, a: 1 } : { r: 0, g: 0, b: 0, a: 1 };
+                const square = new Square(this.gl, this.shaderProgram, this.objService.objs['square'], letter + number, color);
                 this.squares.push(square);
-            }
+            });
         }
     }
 

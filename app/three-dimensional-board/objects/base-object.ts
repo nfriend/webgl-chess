@@ -3,6 +3,13 @@ import { Obj } from '../obj-service/obj-parser';
 export abstract class BaseObject {    
 
     public color: { r: number, g: number, b: number, a: number } = { r: 1.0, g: 1.0, b: 1.0, a: 1.0 };
+
+    // the current location of this piece
+    protected _location: Vector = $V([0, 0, 0]);
+    public get location(): Vector {
+        return this._location;
+    }
+
     public initialModelViewMatrix = Matrix.I(4);
 
     private vertexPositionAttribute: number;
@@ -14,7 +21,7 @@ export abstract class BaseObject {
     private vertexNormalBuffer: WebGLBuffer;
     private verticesIndexBuffer: WebGLBuffer;
 
-    constructor(private gl: WebGLRenderingContext, private shaderProgram: WebGLProgram, public location: Vector, public obj: Obj) {
+    constructor(private gl: WebGLRenderingContext, private shaderProgram: WebGLProgram, public obj: Obj) {
     }
 
     public initializeShaders() {
@@ -54,6 +61,8 @@ export abstract class BaseObject {
     }
 
     public draw(projection: Matrix, modelView: Matrix) {
+        this.update();
+
         this.gl.useProgram(this.shaderProgram);
 
         this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.vertexPositionBuffer);
@@ -75,5 +84,9 @@ export abstract class BaseObject {
         this.gl.uniformMatrix4fv(normalUniform, false, new Float32Array(translatedMatrix.inverse().transpose().flatten()));
 
         this.gl.drawElements(this.gl.TRIANGLES, this.obj.rawData.faces.length * 3, this.gl.UNSIGNED_SHORT, 0);
+    }
+
+    protected update() {
+
     }
 }

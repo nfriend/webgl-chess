@@ -1,12 +1,11 @@
-import { ThreeDimensionalBoardService } from './three-dimensional-board.service';
 import { ObjService } from './obj-service/obj.service';
 import { WebGLManagerService } from './webgl-manager.service';
 
 export class ThreeDimensionalBoardController {
     public static injectionName = 'WebGLChess.ThreeDimensionalBoardService';
-    public static $inject = ['$log', '$scope', '$timeout', '$stateParams', ThreeDimensionalBoardService.injectionName, ObjService.injectionName, WebGLManagerService.injectionName];
+    public static $inject = ['$log', '$scope', '$timeout', '$stateParams', ObjService.injectionName, WebGLManagerService.injectionName];
 
-    constructor(private $log: ng.ILogService, private $scope: ng.IScope, private $timeout: ng.ITimeoutService, private $stateParams: ng.ui.IStateParamsService, private threeDimensionalBoardService: ThreeDimensionalBoardService, private objService: ObjService, private webGLManagerService: WebGLManagerService) {
+    constructor(private $log: ng.ILogService, private $scope: ng.IScope, private $timeout: ng.ITimeoutService, private $stateParams: ng.ui.IStateParamsService, private objService: ObjService, private webGLManagerService: WebGLManagerService) {
     }
 
     loadingValue;
