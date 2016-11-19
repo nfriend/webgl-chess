@@ -44,7 +44,7 @@ export class WebGLManagerService {
         this.width = viewPort[2];
         this.height = viewPort[3];
 
-        this.gl.clearColor(0.0, .8, .8, 1.0); // background color
+        this.gl.clearColor(0, 0, 0, 0); // background color
         this.gl.enable(this.gl.DEPTH_TEST);
         this.gl.depthFunc(this.gl.LEQUAL);
         this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT); // clear the color and depth buffer
