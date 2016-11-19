@@ -55,7 +55,7 @@ export class ChessBoardService {
             }
 
             pieceToMove.moveTo(move.to);
-            setTimeout(this.executeNextMove(), 0);
+            setTimeout(this.executeNextMove(), 2000);
         });
     }
 
