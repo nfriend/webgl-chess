@@ -21,8 +21,8 @@ export class ChessPiece extends BaseObject {
         return this._squareString;
     }
 
-    constructor(gl: WebGLRenderingContext, shaderProgram: WebGLProgram, obj: Obj, pieceTeam: PieceTeam, squareString: string) {
-        super(gl, shaderProgram, obj);
+    constructor(gl: WebGLRenderingContext, shaderProgram: WebGLProgram, obj: Obj, textureImage: HTMLImageElement, pieceTeam: PieceTeam, squareString: string) {
+        super(gl, shaderProgram, obj, textureImage);
         this.pieceTeam = pieceTeam;
         this._squareString = squareString;
         this._location = squareToCoordsMap[squareString];

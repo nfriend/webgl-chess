@@ -1,7 +1,10 @@
 precision mediump float;
 
+varying vec2 passedVertexTextureCoords;
 varying vec3 normalInterpolation, passedVertexPosition;
 varying vec4 passedVertexColor;
+
+uniform sampler2D sampler;
 
 const vec3 lightPos = vec3(-1.0, 1.0, 1.0);
 const vec3 diffuseColor = vec3(0.5, 0.5, 0.5);
@@ -28,5 +31,8 @@ void main() {
         specular = pow(specAngle, 16.0);
     }
 
-    gl_FragColor = (lambertian * passedVertexColor * 0.5) + vec4((lambertian * diffuseColor * .1) + specular * specColor + ambientColor, 1.0);
+    vec4 textureColor = texture2D(sampler, vec2(passedVertexTextureCoords.s, passedVertexTextureCoords.t));
+
+    gl_FragColor = (lambertian * textureColor * 0.5) + vec4((lambertian * diffuseColor * .1) + specular * specColor + ambientColor, 1.0);
+
 }

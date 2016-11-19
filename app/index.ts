@@ -20,7 +20,7 @@ import { TwoDimensionalBoardDirective } from './two-dimensional-board/two-dimens
 import { TwoDimensionalBoardController } from './two-dimensional-board/two-dimensional-board.controller';
 import { ThreeDimensionalBoardDirective } from './three-dimensional-board/three-dimensional-board.directive';
 import { ThreeDimensionalBoardController } from './three-dimensional-board/three-dimensional-board.controller';
-import { ObjService } from './three-dimensional-board/obj-service/obj.service';
+import { AssetService } from './three-dimensional-board/obj-service/obj.service';
 import { WebGLManagerService } from './three-dimensional-board/webgl-manager.service';
 import { ChessBoardService } from './three-dimensional-board/objects/chessboard.service';
 import { StatsDirective } from './stats/stats.directive';
@@ -47,7 +47,7 @@ angular
     .controller(TwoDimensionalBoardController.injectionName, TwoDimensionalBoardController)
     .directive(ThreeDimensionalBoardDirective.injectionName, ['$window', WebGLManagerService.injectionName, ($window: ng.IWindowService, wms: WebGLManagerService) => new ThreeDimensionalBoardDirective($window, wms)])
     .controller(ThreeDimensionalBoardController.injectionName, ThreeDimensionalBoardController)
-    .service(ObjService.injectionName, ObjService)
+    .service(AssetService.injectionName, AssetService)
     .service(WebGLManagerService.injectionName, WebGLManagerService)
     .service(ChessBoardService.injectionName, ChessBoardService)
     .directive(StatsDirective.injectionName, [StatsService.injectionName, (ss: StatsService) => new StatsDirective(ss)])

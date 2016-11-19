@@ -1,11 +1,11 @@
-import { ObjService } from './obj-service/obj.service';
+import { AssetService } from './obj-service/obj.service';
 import { WebGLManagerService } from './webgl-manager.service';
 
 export class ThreeDimensionalBoardController {
     public static injectionName = 'WebGLChess.ThreeDimensionalBoardService';
-    public static $inject = ['$log', '$scope', '$timeout', '$stateParams', ObjService.injectionName, WebGLManagerService.injectionName];
+    public static $inject = ['$log', '$scope', '$timeout', '$stateParams', AssetService.injectionName, WebGLManagerService.injectionName];
 
-    constructor(private $log: ng.ILogService, private $scope: ng.IScope, private $timeout: ng.ITimeoutService, private $stateParams: ng.ui.IStateParamsService, private objService: ObjService, private webGLManagerService: WebGLManagerService) {
+    constructor(private $log: ng.ILogService, private $scope: ng.IScope, private $timeout: ng.ITimeoutService, private $stateParams: ng.ui.IStateParamsService, private assetServie: AssetService, private webGLManagerService: WebGLManagerService) {
     }
 
     loadingValue;
@@ -16,7 +16,7 @@ export class ThreeDimensionalBoardController {
     $onInit = () => {
         this.showMetrics = this.$stateParams['showMetrics'] === 'true';
 
-        this.objService.downloadObjs().then(() => {
+        this.assetServie.downloadAllAssets().then(() => {
             this.webGLManagerService.initialize();
         }, null, state => {
             this.loadingValue = Math.floor((state.current / state.total) * 100);

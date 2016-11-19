@@ -1,4 +1,4 @@
-import { ObjService } from './obj-service/obj.service';
+import { AssetService } from './obj-service/obj.service';
 import * as _ from 'lodash';
 import { ChessBoardService } from './objects/chessboard.service';
 import { Utility } from '../utility/utility';
@@ -11,7 +11,7 @@ const fragmentShader = require('raw!./shaders/shader.fs');
 export class WebGLManagerService {
 
     public static injectionName = 'WebGLChess.WebGLManagerService';
-    public static $inject = [ObjService.injectionName, ChessBoardService.injectionName, StatsService.injectionName];
+    public static $inject = [AssetService.injectionName, ChessBoardService.injectionName, StatsService.injectionName];
 
     public gl: WebGLRenderingContext;
 
@@ -31,7 +31,7 @@ export class WebGLManagerService {
     private height: number;
     private cameraControls = new CameraControls();
 
-    constructor(private objService: ObjService, private chessBoard: ChessBoardService, private statsService: StatsService) {
+    constructor(private assetService: AssetService, private chessBoard: ChessBoardService, private statsService: StatsService) {
     }
 
     public initialize() {

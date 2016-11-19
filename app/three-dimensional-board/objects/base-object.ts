@@ -1,8 +1,9 @@
 import { Obj } from '../obj-service/obj-parser';
 
-export abstract class BaseObject {    
+export abstract class BaseObject {
 
     public color: { r: number, g: number, b: number, a: number } = { r: 1.0, g: 1.0, b: 1.0, a: 1.0 };
+    protected texture: WebGLTexture;
 
     // the current location of this piece
     protected _location: Vector = $V([0, 0, 0]);
@@ -15,13 +16,15 @@ export abstract class BaseObject {
     private vertexPositionAttribute: number;
     private vertexColorAttribute: number;
     private vertexNormalAttribute: number;
+    private vertexTextureCoordsAttribute: number;
 
     private vertexPositionBuffer: WebGLBuffer;
     private vertexColorBuffer: WebGLBuffer;
     private vertexNormalBuffer: WebGLBuffer;
     private verticesIndexBuffer: WebGLBuffer;
+    private vertexTextureCoordsBuffer: WebGLBuffer;
 
-    constructor(private gl: WebGLRenderingContext, private shaderProgram: WebGLProgram, public obj: Obj) {
+    constructor(private gl: WebGLRenderingContext, private shaderProgram: WebGLProgram, protected obj: Obj, protected textureImage?: HTMLImageElement) {
     }
 
     public initializeShaders() {
@@ -33,6 +36,8 @@ export abstract class BaseObject {
         this.gl.enableVertexAttribArray(this.vertexColorAttribute);
         this.vertexNormalAttribute = this.gl.getAttribLocation(this.shaderProgram, 'vertexNormal');
         this.gl.enableVertexAttribArray(this.vertexNormalAttribute);
+        this.vertexTextureCoordsAttribute = this.gl.getAttribLocation(this.shaderProgram, 'vertexTextureCoords');
+        this.gl.enableVertexAttribArray(this.vertexTextureCoordsAttribute);
     }
 
     public initializeBuffers() {
@@ -55,9 +60,21 @@ export abstract class BaseObject {
         this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.vertexNormalBuffer);
         this.gl.bufferData(this.gl.ARRAY_BUFFER, new Float32Array(this.obj.renderData.vertexNormals), this.gl.STATIC_DRAW);
 
+        this.vertexTextureCoordsBuffer = this.gl.createBuffer();
+        this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.vertexTextureCoordsBuffer);
+        this.gl.bufferData(this.gl.ARRAY_BUFFER, new Float32Array(this.obj.renderData.textureCoords), this.gl.STATIC_DRAW);
+
         this.verticesIndexBuffer = this.gl.createBuffer();
         this.gl.bindBuffer(this.gl.ELEMENT_ARRAY_BUFFER, this.verticesIndexBuffer);
         this.gl.bufferData(this.gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(this.obj.renderData.vertexIndices), this.gl.STATIC_DRAW);
+
+        this.texture = this.gl.createTexture();
+        this.gl.bindTexture(this.gl.TEXTURE_2D, this.texture);
+        this.gl.texImage2D(this.gl.TEXTURE_2D, 0, this.gl.RGBA, this.gl.RGBA, this.gl.UNSIGNED_BYTE, this.textureImage);
+        this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_MAG_FILTER, this.gl.LINEAR);
+        this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_MIN_FILTER, this.gl.LINEAR_MIPMAP_NEAREST);
+        this.gl.generateMipmap(this.gl.TEXTURE_2D);
+        this.gl.bindTexture(this.gl.TEXTURE_2D, null);
     }
 
     public draw(projection: Matrix, modelView: Matrix) {
@@ -71,6 +88,8 @@ export abstract class BaseObject {
         this.gl.vertexAttribPointer(this.vertexColorAttribute, 4, this.gl.FLOAT, false, 0, 0);
         this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.vertexNormalBuffer);
         this.gl.vertexAttribPointer(this.vertexNormalAttribute, 3, this.gl.FLOAT, false, 0, 0);
+        this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.vertexTextureCoordsBuffer);
+        this.gl.vertexAttribPointer(this.vertexTextureCoordsAttribute, 2, this.gl.FLOAT, false, 0, 0);
         this.gl.bindBuffer(this.gl.ELEMENT_ARRAY_BUFFER, this.verticesIndexBuffer);
 
         let projectionUniform = this.gl.getUniformLocation(this.shaderProgram, 'projectionMatrix');
@@ -82,6 +101,10 @@ export abstract class BaseObject {
 
         let normalUniform = this.gl.getUniformLocation(this.shaderProgram, 'normalMatrix');
         this.gl.uniformMatrix4fv(normalUniform, false, new Float32Array(translatedMatrix.inverse().transpose().flatten()));
+
+        this.gl.activeTexture(this.gl.TEXTURE0);
+        this.gl.bindTexture(this.gl.TEXTURE_2D, this.texture);
+        this.gl.uniform1i(this.gl.getUniformLocation(this.shaderProgram, "sampler"), 0);
 
         this.gl.drawElements(this.gl.TRIANGLES, this.obj.rawData.faces.length * 3, this.gl.UNSIGNED_SHORT, 0);
     }
