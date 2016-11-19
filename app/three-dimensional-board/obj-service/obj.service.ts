@@ -19,7 +19,8 @@ export class AssetService {
     public textures: TextureHolder = {};
 
     private objFilepaths: { [objectName: string]: string } = {
-        pawn: 'assets/obj/pawn.obj',
+        pawnLight: 'assets/obj/pawn-light.obj',
+        pawnDark: 'assets/obj/pawn-dark.obj',
         knight: 'assets/obj/knight.obj',
         rook: 'assets/obj/rook.obj',
         bishop: 'assets/obj/bishop.obj',
@@ -29,7 +30,8 @@ export class AssetService {
     };
 
     private textureFilepaths: { [textureName: string]: string } = {
-        lightWood: 'assets/textures/light-wood.jpg'
+        lightWood: 'assets/textures/light-wood.jpg',
+        darkWood: 'assets/textures/dark-wood.jpg',
     };
 
     public downloadAllAssets(): ng.IPromise<any> {

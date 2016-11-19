@@ -33,6 +33,6 @@ void main() {
 
     vec4 textureColor = texture2D(sampler, vec2(passedVertexTextureCoords.s, passedVertexTextureCoords.t));
 
-    gl_FragColor = (lambertian * textureColor * 0.5) + vec4((lambertian * diffuseColor * .1) + specular * specColor + ambientColor, 1.0);
+    gl_FragColor = (lambertian * textureColor) + vec4((lambertian * diffuseColor * .1) + specular * specColor + ambientColor, 1.0);
 
 }
