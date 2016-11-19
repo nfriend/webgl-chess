@@ -28,9 +28,7 @@ export class ChessBoardService {
         this.shaderProgram = shaderProgram;
         this.initPieces();
 
-        setTimeout(() => {
-            this.executeNextMove();
-        }, 200);
+        setTimeout(() => { this.executeNextMove(); }, 200);
     }
 
     private executeNextMove() {
@@ -55,7 +53,7 @@ export class ChessBoardService {
             }
 
             pieceToMove.moveTo(move.to);
-            setTimeout(this.executeNextMove(), 2000);
+            setTimeout(() => { this.executeNextMove(); }, 2000);
         });
     }
 
