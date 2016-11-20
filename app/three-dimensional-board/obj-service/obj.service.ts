@@ -26,7 +26,7 @@ export class AssetService {
         bishop: 'assets/obj/bishop.obj',
         queen: 'assets/obj/queen.obj',
         king: 'assets/obj/king.obj',
-        square: 'assets/obj/square.obj'
+        squareDark: 'assets/obj/square-dark.obj'
     };
 
     private textureFilepaths: { [textureName: string]: string } = {

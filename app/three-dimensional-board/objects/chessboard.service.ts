@@ -28,7 +28,7 @@ export class ChessBoardService {
         this.shaderProgram = shaderProgram;
         this.initPieces();
 
-        //setTimeout(() => { this.executeNextMove(); }, 200);
+        setTimeout(() => { this.executeNextMove(); }, 200);
     }
 
     private executeNextMove() {
@@ -64,45 +64,27 @@ export class ChessBoardService {
 
         // black
         ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'].forEach((letter, index) => {
-            const pawn = new Pieces.Pawn(this.gl, this.shaderProgram, this.assetService.objs['pawnDark'], darkWood, Pieces.PieceTeam.Black, letter + '7')
-            
-            // orient the pawn differently so they don't all look identical
-            pawn.initialModelViewMatrix = Matrix.RotationY(Utility.degreesToRadians((Math.floor(Math.random() * 360)))).ensure4x4();
-
-            this.pieces.push(pawn);
+            this.pieces.push(new Pieces.Pawn(this.gl, this.shaderProgram, this.assetService.objs['pawnDark'], darkWood, Pieces.PieceTeam.Black, letter + '7'));
         });
 
-        /*
-        const darkRook1 = new Pieces.Rook(this.gl, this.shaderProgram, this.assetService.objs['rook'], lightWood, Pieces.PieceTeam.Black, 'a8');
-        const darkRook2 = new Pieces.Rook(this.gl, this.shaderProgram, this.assetService.objs['rook'], lightWood, Pieces.PieceTeam.Black, 'h8');
 
-        const darkKnight1 = new Pieces.Knight(this.gl, this.shaderProgram, this.assetService.objs['knight'], lightWood, Pieces.PieceTeam.Black, 'b8');
-        const darkKnight2 = new Pieces.Knight(this.gl, this.shaderProgram, this.assetService.objs['knight'], lightWood, Pieces.PieceTeam.Black, 'g8');
+        this.pieces.push(new Pieces.Rook(this.gl, this.shaderProgram, this.assetService.objs['rook'], darkWood, Pieces.PieceTeam.Black, 'a8'));
+        this.pieces.push(new Pieces.Rook(this.gl, this.shaderProgram, this.assetService.objs['rook'], darkWood, Pieces.PieceTeam.Black, 'h8'));
 
-        const darkBishop1 = new Pieces.Bishop(this.gl, this.shaderProgram, this.assetService.objs['bishop'], lightWood, Pieces.PieceTeam.Black, 'c8');
-        const darkBishop2 = new Pieces.Bishop(this.gl, this.shaderProgram, this.assetService.objs['bishop'], lightWood, Pieces.PieceTeam.Black, 'f8');
+        this.pieces.push(new Pieces.Knight(this.gl, this.shaderProgram, this.assetService.objs['knight'], darkWood, Pieces.PieceTeam.Black, 'b8'));
+        this.pieces.push(new Pieces.Knight(this.gl, this.shaderProgram, this.assetService.objs['knight'], darkWood, Pieces.PieceTeam.Black, 'g8'));
 
-        const darkQueen = new Pieces.Queen(this.gl, this.shaderProgram, this.assetService.objs['queen'], lightWood, Pieces.PieceTeam.Black, 'd8');
+        this.pieces.push(new Pieces.Bishop(this.gl, this.shaderProgram, this.assetService.objs['bishop'], darkWood, Pieces.PieceTeam.Black, 'c8'));
+        this.pieces.push(new Pieces.Bishop(this.gl, this.shaderProgram, this.assetService.objs['bishop'], darkWood, Pieces.PieceTeam.Black, 'f8'));
 
-        const darkKing = new Pieces.King(this.gl, this.shaderProgram, this.assetService.objs['king'], lightWood, Pieces.PieceTeam.Black, 'e8');
+        this.pieces.push(new Pieces.Queen(this.gl, this.shaderProgram, this.assetService.objs['queen'], darkWood, Pieces.PieceTeam.Black, 'd8'));
 
-        // these dark pieces should be rotated 180 degrees
-        [darkKnight1, darkKnight2, darkBishop1, darkBishop2].forEach(p => {
-            p.initialModelViewMatrix = Matrix.RotationY(Utility.degreesToRadians(180)).ensure4x4()
-        });
-        */
+        this.pieces.push(new Pieces.King(this.gl, this.shaderProgram, this.assetService.objs['king'], darkWood, Pieces.PieceTeam.Black, 'e8'));
 
         // white
         ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'].forEach(letter => {
-            const pawn = new Pieces.Pawn(this.gl, this.shaderProgram, this.assetService.objs['pawnLight'], lightWood, Pieces.PieceTeam.White, letter + '2');
-
-            // orient the pawn differently so they don't all look identical
-            pawn.initialModelViewMatrix = Matrix.RotationY(Utility.degreesToRadians((Math.floor(Math.random() * 360)))).ensure4x4();
-
-            this.pieces.push(pawn);
+            this.pieces.push(new Pieces.Pawn(this.gl, this.shaderProgram, this.assetService.objs['pawnLight'], lightWood, Pieces.PieceTeam.White, letter + '2'));
         });
-
-        /*
 
         this.pieces.push(new Pieces.Rook(this.gl, this.shaderProgram, this.assetService.objs['rook'], lightWood, Pieces.PieceTeam.White, 'a1'));
         this.pieces.push(new Pieces.Rook(this.gl, this.shaderProgram, this.assetService.objs['rook'], lightWood, Pieces.PieceTeam.White, 'h1'));
@@ -117,16 +99,34 @@ export class ChessBoardService {
 
         this.pieces.push(new Pieces.King(this.gl, this.shaderProgram, this.assetService.objs['king'], lightWood, Pieces.PieceTeam.White, 'e1'));
 
+        // these dark pieces should be rotated 180 degrees
+        this.pieces.filter(p => p.pieceTeam === Pieces.PieceTeam.Black && (p.type === Pieces.PieceType.Knight || p.type === Pieces.PieceType.Bishop)).forEach(p => {
+            p.initialModelViewMatrix = Matrix.RotationY(Utility.degreesToRadians(180)).ensure4x4();
+        });
+
+        // these pieces should be randomly rotated to make the textures look less repetative
+        this.pieces.filter(p => p.type === Pieces.PieceType.Pawn || p.type === Pieces.PieceType.Rook || p.type === Pieces.PieceType.Queen).forEach(p => {
+            p.initialModelViewMatrix = Matrix.RotationY(Utility.degreesToRadians((Math.floor(Math.random() * 360)))).ensure4x4();
+        });
+
         // squares
         for (let number = 8; number > 0; number--) {
             ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'].forEach((letter, letterIndex) => {
-                const color = (number + letterIndex) % 2 === 0 ? { r: 1, g: 1, b: 1, a: 1 } : { r: 0, g: 0, b: 0, a: 1 };
-                const square = new Square(this.gl, this.shaderProgram, this.assetService.objs['square'], lightWood, letter + number, color);
+                const textureImage = (number + letterIndex) % 2 === 0 ? lightWood : darkWood;
+                const square = new Square(this.gl, this.shaderProgram, this.assetService.objs['squareDark'], textureImage, letter + number);
+
+                // randomly rotate to avoid repetition
+                const rotationAmount = Math.floor(Math.random() * 4) * 90;
+                square.initialModelViewMatrix = Matrix.RotationY(Utility.degreesToRadians(rotationAmount)).ensure4x4();
+                
+                // randomly flip as well
+                if (Math.random() > .5) {
+                    square.initialModelViewMatrix = Matrix.RotationX(Utility.degreesToRadians(180)).ensure4x4().multiply(square.initialModelViewMatrix);
+                }
+
                 this.squares.push(square);
             });
         }
-
-        */
     }
 
     public initializeShaders() {

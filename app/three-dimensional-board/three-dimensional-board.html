@@ -1,6 +1,6 @@
 <stats ng-if="vm.showMetrics"></stats>
 <div class="three-dimensional-board" flex="grow" layout="row" layout-align="center center">
-    <canvas class="chessboard-canvas"></canvas>
+    <canvas class="chessboard-canvas" ng-class="{ 'faded-in': vm.loadingValue === 100 }"></canvas>
     <div flex="50" class="progress-container" ng-class="{ 'fading-out': vm.loadingValue === 100 }" ng-if="vm.loadingVisible">
         <p>Loading&hellip;</p>
         <md-progress-linear class="md-primary md-hue-2" md-mode="determinate" value="{{vm.loadingValue}}"></md-progress-linear>
