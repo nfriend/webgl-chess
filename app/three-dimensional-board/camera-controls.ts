@@ -16,12 +16,17 @@ export class CameraControls {
     private MOUSE_X_SPEED = .2;
     private MOUSE_Y_SPEED = .2;
     private MOUSE_ZOOM_SPEED = .01;
+    private TOUCH_X_SPEED = .2;
+    private TOUCH_Y_SPEED = .2;
 
     private $el: JQuery;
+    private hammer: HammerManager;
 
     private currentKeys: { [keyCode: number]: boolean } = {};
     private startCoords: { x: number, y: number } = null;
     private lastCoords: { x: number, y: number } = null;
+    private startPanCoords: { x: number, y: number } = null;
+    private lastPanCoords: { x: number, y: number } = null;
 
     public startListening = ($el: JQuery) => {
         this.$el = $el;
@@ -31,6 +36,12 @@ export class CameraControls {
         $el.on('mousemove', this.onMouseMove);
         $el.on('mouseup', this.onMouseUp);
         $el.on('mousewheel DOMMouseScroll', this.onScroll);
+
+        // enable touch events
+        this.hammer = new Hammer($el[0]);
+        this.hammer.on('pan', this.onPan);
+        this.hammer.on('panstart', this.onPanStart);
+        this.hammer.on('panend', this.onPanEnd);
     }
 
     public stopListening = () => {
@@ -40,6 +51,11 @@ export class CameraControls {
         this.$el.off('mousemove', this.onMouseMove);
         this.$el.off('mouseup', this.onMouseUp);
         this.$el.off('mousewheel DOMMouseScroll', this.onScroll);
+
+        this.hammer.off('pan', this.onPan);
+        this.hammer.off('panstart', this.onPanStart);
+        this.hammer.off('panend', this.onPanEnd);
+        this.hammer.destroy();
     }
 
     public update = () => {
@@ -76,6 +92,17 @@ export class CameraControls {
 
             this.startCoords = this.lastCoords;
             this.lastCoords = null;
+        }
+
+        if (this.startPanCoords && this.lastPanCoords) {
+            const deltaX = this.lastPanCoords.x - this.startPanCoords.x;
+            const deltaY = this.lastPanCoords.y - this.startPanCoords.y;
+
+            this.rotationY += deltaX * this.TOUCH_Y_SPEED;
+            this.rotationX += deltaY * this.TOUCH_X_SPEED;
+
+            this.startPanCoords = this.lastPanCoords;
+            this.lastPanCoords = null;
         }
 
         this.checkBounds();
@@ -127,6 +154,32 @@ export class CameraControls {
 
     onMouseUp = (ev: JQueryMouseEventObject) => {
         this.startCoords = this.lastCoords = null;
+    }
+
+    onPanStart = (ev: HammerInput) => {
+        if (ev.pointerType === 'touch') {
+            this.startPanCoords = {
+                x: ev.center.x - ev.deltaX,
+                y: ev.center.y - ev.deltaY
+            };
+            this.lastPanCoords = {
+                x: ev.center.x,
+                y: ev.center.y
+            };
+        }
+    }
+
+    onPan = (ev: HammerInput) => {
+        if (ev.pointerType === 'touch') {
+            this.lastPanCoords = {
+                x: ev.center.x,
+                y: ev.center.y
+            };
+        }
+    }
+
+    onPanEnd = (ev: HammerInput) => {
+        this.startPanCoords = this.lastPanCoords = null;
     }
 
     onScroll = (ev: JQueryMouseEventObject) => {

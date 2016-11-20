@@ -4,6 +4,7 @@ import 'angular-aria';
 import 'angular-animate';
 import 'angular-material';
 import 'angular-ui-router';
+import 'hammerjs';
 require('script!../node_modules/chess.js/chess.min.js');
 require('script!./third-party/sylvester.min.js');
 require('script!./third-party/glUtils.min.js');
