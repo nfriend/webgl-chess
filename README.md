@@ -7,8 +7,7 @@ This project is built with the following technologies:
 - [stockfish-js](https://github.com/exoticorn/stockfish-js) for chess AI, which utilizes [Web Workers](https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Using_web_workers)
 - [chess-js](https://github.com/jhlywa/chess.js) for move validation/piece placement and movement/check detection/etc.
 - Angular 1 and Angular Material for UI interaction
-- [TypeScript](https://www.typescriptlang.org/), [SASS](http://sass-lang.com/), [Gulp](http://gulpjs.com/), [Webpack](https://webpack.github.io/), [Yarn](https://yarnpkg.com/)
-- ["Chess" font](http://www.dafont.com/chess.font) for chess icons in 2D mode
+- [TypeScript](https://www.typescriptlang.org/), [SASS](http://sass-lang.com/), [Gulp](http://gulpjs.com/), [Webpack](https://webpack.github.io/), [Yarn](https://yarnpkg.com/) 
 
 ## Building/Running
 
@@ -34,3 +33,24 @@ Browser support for this project is limited by the use of two essential technolo
 - Firefox
 
 Note that this project has not been thoroughly tested in browsers other than Chrome.  For best results, use Chrome.
+
+## Sources
+
+ChessJS was built with a lot of help.  A big thanks to following sources:
+
+- Chessboard and pieces `.obj`'s from http://blender.freemovies.co.uk/modelling-making-a-chess-set/
+- Wood textures from http://www.myfreetextures.com/ and http://bgfons.com/download/1582
+- "Chess" font for chess icons in 2D mode from http://www.dafont.com/chess.font
+- The WebGL tutorials on MDN at https://developer.mozilla.org/en-US/docs/Web/API/WebGL_API/Tutorial
+
+## Tools
+
+Here's what I used to make `webgl-chess`:
+
+- [Visual Studio Code](https://code.visualstudio.com/) for editing
+- [Blender](https://www.blender.org/) and [Gimp](https://www.gimp.org/) for texture mapping and editing
+
+
+
+
+
