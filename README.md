@@ -38,7 +38,7 @@ Note that this project has not been thoroughly tested in browsers other than Chr
 
 ChessJS was built with a lot of help.  A big thanks to following sources:
 
-- Chessboard and pieces `.obj`'s from http://blender.freemovies.co.uk/modelling-making-a-chess-set/
+- Chessboard and chess piece `.obj`'s from http://blender.freemovies.co.uk/modelling-making-a-chess-set/
 - Wood textures from http://www.myfreetextures.com/ and http://bgfons.com/download/1582
 - "Chess" font for chess icons in 2D mode from http://www.dafont.com/chess.font
 - The WebGL tutorials on MDN at https://developer.mozilla.org/en-US/docs/Web/API/WebGL_API/Tutorial
