@@ -55,13 +55,13 @@ gulp.task('styles:watch', () => {
     return gulp.watch('./app/**/*.scss', ['styles'])
 });
 
-gulp.task('index.html', () => {
-    return gulp.src('./app/index.html')
+gulp.task('htmlpages', () => {
+    return gulp.src(['./app/index.html', './app/unsupported-browser.html'])
         .pipe(gulp.dest(dest));
 });
 
-gulp.task('index.html:watch', () => {
-    return gulp.watch('./app/index.html', ['index.html'])
+gulp.task('htmlpages:watch', () => {
+    return gulp.watch(['./app/index.html', './app/unsupported-browser.html'], ['htmlpages']);
 });
 
 gulp.task('assets', () => {
@@ -92,7 +92,7 @@ function startKarmaServer(done, singleRun) {
 gulp.task('build', done => {
     runSequence(
         ['clean'],
-        ['scripts', 'styles', 'index.html', 'assets'],
+        ['scripts', 'styles', 'htmlpages', 'assets'],
         done
     );
 });
@@ -100,7 +100,7 @@ gulp.task('build', done => {
 gulp.task('build:watch', done => {
     runSequence(
         ['build'],
-        ['scripts:watch', 'styles:watch', 'index.html:watch'],
+        ['scripts:watch', 'styles:watch', 'htmlpages:watch'],
         done
     );
 });

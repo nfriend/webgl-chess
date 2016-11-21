@@ -8,8 +8,6 @@ import { squareToCoordsMap } from '../square-to-coords-map';
 import { StockfishService } from '../../stockfish/stockfish.service';
 import { ChessJsService } from '../../chessjs/chessjs.service';
 
-console.log(squareToCoordsMap)
-
 export class ChessBoardService {
 
     public static injectionName = 'WebGLChess.ChessBoardService';

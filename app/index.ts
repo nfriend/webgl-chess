@@ -1,3 +1,4 @@
+import './redirect-unsupported-browsers';
 require('script!../node_modules/jquery/dist/jquery.min.js');
 import 'angular';
 import 'angular-aria';
