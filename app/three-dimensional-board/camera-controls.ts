@@ -8,7 +8,7 @@ export class CameraControls {
 
     private MAX_X = 80;
     private MIN_X = 10;
-    private MAX_ZOOM = 35;
+    private MAX_ZOOM = 45;
     private MIN_ZOOM = 15;
     private KEYBOARD_X_SPEED = 1;
     private KEYBOARD_Y_SPEED = 1;
@@ -18,6 +18,8 @@ export class CameraControls {
     private MOUSE_ZOOM_SPEED = .01;
     private TOUCH_X_SPEED = .2;
     private TOUCH_Y_SPEED = .2;
+    private TOUCH_PINCH_SPEED = .5;
+    private TOUCH_ROTATION_SPEED = 1;
 
     private $el: JQuery;
     private hammer: HammerManager;
@@ -27,6 +29,9 @@ export class CameraControls {
     private lastCoords: { x: number, y: number } = null;
     private startPanCoords: { x: number, y: number } = null;
     private lastPanCoords: { x: number, y: number } = null;
+    private startZoom: number = this.zoom;
+    private startTouchRotation: number = null;
+    private lastTouchRotation: number = null;
 
     public startListening = ($el: JQuery) => {
         this.$el = $el;
@@ -39,9 +44,18 @@ export class CameraControls {
 
         // enable touch events
         this.hammer = new Hammer($el[0]);
+        this.hammer.get('pinch').set({ enable: true });
+        this.hammer.get('rotate').set({ enable: true });
+        this.hammer.get('pan').set({ direction: Hammer.DIRECTION_ALL });
+        this.hammer.get('swipe').set({ direction: Hammer.DIRECTION_ALL });
+
         this.hammer.on('pan', this.onPan);
         this.hammer.on('panstart', this.onPanStart);
         this.hammer.on('panend', this.onPanEnd);
+        this.hammer.on('pinch', this.onPinch);
+        this.hammer.on('pinchstart', this.onPinchStart);
+        this.hammer.on('rotatestart', this.onRotateStart);
+        this.hammer.on('rotate', this.onRotate);
     }
 
     public stopListening = () => {
@@ -55,6 +69,10 @@ export class CameraControls {
         this.hammer.off('pan', this.onPan);
         this.hammer.off('panstart', this.onPanStart);
         this.hammer.off('panend', this.onPanEnd);
+        this.hammer.off('pinch', this.onPinch);
+        this.hammer.off('pinchstart', this.onPinchStart);
+        this.hammer.off('rotatestart', this.onRotateStart);
+        this.hammer.off('rotate', this.onRotate);
         this.hammer.destroy();
     }
 
@@ -103,6 +121,13 @@ export class CameraControls {
 
             this.startPanCoords = this.lastPanCoords;
             this.lastPanCoords = null;
+        }
+
+        if (this.startTouchRotation && this.lastTouchRotation) {
+            const delta = this.lastTouchRotation - this.startTouchRotation;
+            this.rotationY -= delta * this.TOUCH_ROTATION_SPEED;
+            this.startTouchRotation = this.lastTouchRotation;
+            this.lastTouchRotation = null;
         }
 
         this.checkBounds();
@@ -158,6 +183,7 @@ export class CameraControls {
 
     onPanStart = (ev: HammerInput) => {
         if (ev.pointerType === 'touch') {
+            ev.preventDefault();
             this.startPanCoords = {
                 x: ev.center.x - ev.deltaX,
                 y: ev.center.y - ev.deltaY
@@ -171,6 +197,7 @@ export class CameraControls {
 
     onPan = (ev: HammerInput) => {
         if (ev.pointerType === 'touch') {
+            ev.preventDefault();
             this.lastPanCoords = {
                 x: ev.center.x,
                 y: ev.center.y
@@ -179,7 +206,10 @@ export class CameraControls {
     }
 
     onPanEnd = (ev: HammerInput) => {
-        this.startPanCoords = this.lastPanCoords = null;
+        if (ev.pointerType === 'touch') {
+            ev.preventDefault();
+            this.startPanCoords = this.lastPanCoords = null;
+        }
     }
 
     onScroll = (ev: JQueryMouseEventObject) => {
@@ -187,5 +217,26 @@ export class CameraControls {
         ev.preventDefault();
         this.zoom -= (<any>ev.originalEvent).wheelDelta * this.MOUSE_ZOOM_SPEED;
         this.checkBounds();
+    }
+
+    onPinchStart = (ev: HammerInput) => {
+        ev.preventDefault();
+        this.startZoom = this.zoom;
+    }
+
+    onPinch = (ev: HammerInput) => {
+        ev.preventDefault();
+        this.zoom = this.startZoom / ev.scale;
+        this.checkBounds();
+    }
+
+    onRotateStart = (ev: HammerInput) => {
+        ev.preventDefault();
+        this.startTouchRotation = ev.rotation;
+    }
+
+    onRotate = (ev: HammerInput) => {
+        ev.preventDefault();
+        this.lastTouchRotation = ev.rotation;
     }
 }
