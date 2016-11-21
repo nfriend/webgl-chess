@@ -8,6 +8,7 @@ This project is built with the following technologies:
 - [chess-js](https://github.com/jhlywa/chess.js) for move validation/piece placement and movement/check detection/etc.
 - Angular 1 and Angular Material for UI interaction
 - [TypeScript](https://www.typescriptlang.org/), [SASS](http://sass-lang.com/), [Gulp](http://gulpjs.com/), [Webpack](https://webpack.github.io/), [Yarn](https://yarnpkg.com/) 
+- [Modernizr](https://modernizr.com/) for browser feature detection
 
 ## Building/Running
 
@@ -38,8 +39,9 @@ Note that this project has not been thoroughly tested in browsers other than Chr
 
 ChessJS was built with a lot of help.  A big thanks to following sources:
 
-- Chessboard and chess piece `.obj`'s from http://blender.freemovies.co.uk/modelling-making-a-chess-set/
+- Chess piece `.obj`'s from http://blender.freemovies.co.uk/modelling-making-a-chess-set/
 - Wood textures from http://www.myfreetextures.com/ and http://bgfons.com/download/1582
+- Green background from http://www.zingerbug.com/background.php?MyFile=green_parchment_paper_wallpaper_texture_seamless.php&ID=C732.php
 - "Chess" font for chess icons in 2D mode from http://www.dafont.com/chess.font
 - The WebGL tutorials on MDN at https://developer.mozilla.org/en-US/docs/Web/API/WebGL_API/Tutorial
 
