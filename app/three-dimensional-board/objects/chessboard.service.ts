@@ -2,6 +2,7 @@ import * as Pieces from './pieces';
 import { AssetService } from '../obj-service/obj.service';
 import { Utility } from '../../utility/utility';
 import { Square } from './square';
+import { Border } from './border';
 import { BaseObject } from './base-object';
 import { squareToCoordsMap } from '../square-to-coords-map';
 import { StockfishService } from '../../stockfish/stockfish.service';
@@ -16,6 +17,7 @@ export class ChessBoardService {
 
     public pieces: Pieces.ChessPiece[] = [];
     public squares: Square[] = [];
+    public border: Border;
 
     private gl: WebGLRenderingContext;
     private shaderProgram: WebGLProgram;
@@ -127,6 +129,9 @@ export class ChessBoardService {
                 this.squares.push(square);
             });
         }
+
+        // border
+        this.border = new Border(this.gl, this.shaderProgram, this.assetService.objs['boardBorder'], darkWood);   
     }
 
     public initializeShaders() {
@@ -148,6 +153,6 @@ export class ChessBoardService {
     }
 
     private getAllObjects(): BaseObject[] {
-        return (<BaseObject[]>this.pieces).concat(this.squares);
+        return (<BaseObject[]>this.pieces).concat(this.squares).concat([this.border]);
     }
 }
