@@ -14,7 +14,7 @@ varying vec4 passedVertexColor;
 uniform sampler2D sampler;
 uniform mat4 projectionMatrix, modelViewMatrix, normalMatrix;
 
-#define NUM_LIGHTS 1
+#define NUM_LIGHTS 4
 uniform PointLight lights[NUM_LIGHTS];
 
 // const vec3 lightPos = vec3(-1.0, 1.0, 1.0);
@@ -31,11 +31,11 @@ vec4 calculateLight(PointLight light, vec3 normal, vec3 fragmentPosition, vec4 t
     vec3 viewDirection = normalize(-passedVertexPosition);
     float specularAmount = pow(max(dot(viewDirection, reflectDirection), 0.0), 16.0); // final number is shininess
 
-    vec4 diffuse = vec4(light.diffuse, 1.0) * diffuseAmount * textureColor;
-    vec4 specular = vec4(light.specular, 1.0) * specularAmount * textureColor;
+    vec4 diffuse = vec4(light.diffuse * diffuseAmount, 1.0) * textureColor;
+    vec4 specular = vec4(light.specular * specularAmount, 1.0) * (textureColor * 1.5);
     vec4 ambient = vec4(light.ambient, 1.0) * textureColor;
 
-    return diffuse + specular + ambient;
+    return diffuse + ambient + specular;
 }
 
 void main() {

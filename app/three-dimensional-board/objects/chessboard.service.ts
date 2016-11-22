@@ -30,6 +30,7 @@ export class ChessBoardService {
         this.gl = gl;
         this.shaderProgram = shaderProgram;
         this.initPieces();
+        this.initLights();
 
         setTimeout(() => { this.executeNextMove(); }, 200);
     }
@@ -136,9 +137,12 @@ export class ChessBoardService {
     }
 
     private initLights() {
-        let light1 = new Light($V([-1, 1, 1]), $V([.5, .5, .5]), $V([1, 1, 1]), $V([.5, .5, .5]));
+        let light1 = new Light($V([-1, 1, 1]), $V([.7, .7, .7]), $V([1, 1, 1]), $V([.2, .2, .2]));
+        let light2 = new Light($V([15, 15, -30]), $V([0, 0, .2]), $V([.1, .1, .7]), $V([0, 0, .1]));
+        let light3 = new Light($V([-15, 15, -30]), $V([.2, 0, 0]), $V([.3, .1, .1]), $V([.1, 0, 0]));
+        let light4 = new Light($V([0, 15, 30]), $V([0, .2, 0]), $V([.1, .5, 1.]), $V([0, .1, 0]));
 
-        this.lights.push(light1);
+        this.lights.push(light1, light2, light3, light4);
     }
 
     public initializeShaders() {

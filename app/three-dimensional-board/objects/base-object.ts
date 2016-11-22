@@ -107,7 +107,7 @@ export abstract class BaseObject implements Renderable {
         lights.forEach((light, index) => {
             Object.keys(light).forEach(prop => {
                 let propLocation = this.gl.getUniformLocation(this.shaderProgram, `lights[${index}].${prop}`);
-                this.gl.uniform3fv(propLocation, light[prop].flatten());
+                this.gl.uniform3f(propLocation, light[prop].elements[0], light[prop].elements[1], light[prop].elements[2]);
             });
         });
 
