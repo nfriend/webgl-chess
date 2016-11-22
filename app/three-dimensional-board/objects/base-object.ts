@@ -1,6 +1,8 @@
 import { Obj } from '../obj-service/obj-parser';
+import { Renderable } from './renderable';
+import { Light } from './light';
 
-export abstract class BaseObject {
+export abstract class BaseObject implements Renderable {
 
     public color: { r: number, g: number, b: number, a: number } = { r: 1.0, g: 1.0, b: 1.0, a: 1.0 };
     protected texture: WebGLTexture;
@@ -77,7 +79,7 @@ export abstract class BaseObject {
         this.gl.bindTexture(this.gl.TEXTURE_2D, null);
     }
 
-    public draw(projection: Matrix, modelView: Matrix) {
+    public draw(projection: Matrix, modelView: Matrix, lights: Light[]) {
         this.update();
 
         this.gl.useProgram(this.shaderProgram);
@@ -101,6 +103,13 @@ export abstract class BaseObject {
 
         let normalUniform = this.gl.getUniformLocation(this.shaderProgram, 'normalMatrix');
         this.gl.uniformMatrix4fv(normalUniform, false, new Float32Array(translatedMatrix.inverse().transpose().flatten()));
+
+        lights.forEach((light, index) => {
+            Object.keys(light).forEach(prop => {
+                let propLocation = this.gl.getUniformLocation(this.shaderProgram, `lights[${index}].${prop}`);
+                this.gl.uniform3fv(propLocation, light[prop].flatten());
+            });
+        });
 
         this.gl.activeTexture(this.gl.TEXTURE0);
         this.gl.bindTexture(this.gl.TEXTURE_2D, this.texture);

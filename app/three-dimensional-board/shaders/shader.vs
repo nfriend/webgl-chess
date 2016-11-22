@@ -1,3 +1,5 @@
+precision mediump float;
+
 attribute vec2 vertexTextureCoords;
 attribute vec3 vertexPosition, vertexNormal;
 attribute vec4 vertexColor;

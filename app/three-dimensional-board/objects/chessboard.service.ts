@@ -7,6 +7,8 @@ import { BaseObject } from './base-object';
 import { squareToCoordsMap } from '../square-to-coords-map';
 import { StockfishService } from '../../stockfish/stockfish.service';
 import { ChessJsService } from '../../chessjs/chessjs.service';
+import { Renderable } from './renderable';
+import { Light } from './light';
 
 export class ChessBoardService {
 
@@ -16,6 +18,7 @@ export class ChessBoardService {
     public pieces: Pieces.ChessPiece[] = [];
     public squares: Square[] = [];
     public border: Border;
+    public lights: Light[] = [];
 
     private gl: WebGLRenderingContext;
     private shaderProgram: WebGLProgram;
@@ -132,6 +135,12 @@ export class ChessBoardService {
         this.border = new Border(this.gl, this.shaderProgram, this.assetService.objs['boardBorder'], darkWood);   
     }
 
+    private initLights() {
+        let light1 = new Light($V([-1, 1, 1]), $V([.5, .5, .5]), $V([1, 1, 1]), $V([.5, .5, .5]));
+
+        this.lights.push(light1);
+    }
+
     public initializeShaders() {
         this.getAllObjects().forEach(p => {
             p.initializeShaders();
@@ -146,11 +155,11 @@ export class ChessBoardService {
 
     public draw(projection: Matrix, modelView: Matrix) {
         this.getAllObjects().forEach(p => {
-            p.draw(projection, modelView);
+            p.draw(projection, modelView, this.lights);
         });
     }
 
-    private getAllObjects(): BaseObject[] {
-        return (<BaseObject[]>this.pieces).concat(this.squares).concat([this.border]);
+    private getAllObjects(): Renderable[] {
+        return (<Renderable[]>this.pieces).concat(this.squares).concat([this.border]);
     }
 }
