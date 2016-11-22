@@ -1,5 +1,4 @@
 # TODO
 
-- Add bump maps
-- Add second light
+- Add normal maps
 - Add piece removal animations
