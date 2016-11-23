@@ -13,17 +13,6 @@ class Vector2 {
     v: number;
 }
 
-class Vertex {
-    coord: Vector3;
-    normal: Vector3;
-    textureCoord: Vector2;
-    originalIndex: number;
-}
-
-class Face {
-    vertices: Vertex[] = [];
-}
-
 // holds the parsed data in a structure similar 
 // to the original .obj file
 class ObjRawData {
@@ -115,22 +104,46 @@ export class ObjParser {
                     throw `Error while parsing .obj file.  Face didn't provide a texture coordinate index`;
                 }
 
-                
-
                 parsedObj.renderData.vertexIndices.push(vertexIndex++);
             });
+
+            const vertexCoords = parsedObj.renderData.vertexCoords;
+            const last3VertexCoords: Vector3[] = [];
+            for (var i = 2; i >= 0; i--) {
+                last3VertexCoords.push({
+                    x: vertexCoords[vertexCoords.length - (i * 3) - 3],
+                    y: vertexCoords[vertexCoords.length - (i * 3) - 2],
+                    z: vertexCoords[vertexCoords.length - (i * 3) - 1],
+                });
+            }
+
+            const textureCoords = parsedObj.renderData.textureCoords;
+            const last3TextureCoords: Vector2[] = [];
+            for (var i = 2; i >= 0; i--) {
+                last3TextureCoords.push({
+                    u: textureCoords[textureCoords.length - (i * 2) - 2],
+                    v: textureCoords[textureCoords.length - (i * 2) - 1],
+                });
+            }
+
+            const { tangent, bitangent } = this.computeTanAndBitan(last3VertexCoords, last3TextureCoords);
+
+            for (var i = 0; i < 3; i++) {
+                parsedObj.renderData.vertexTangents.push(tangent.x, tangent.y, tangent.z);
+                parsedObj.renderData.vertexBitangents.push(bitangent.x, bitangent.y, bitangent.z);
+            }
         });
 
         return parsedObj;
     }
 
-    private static computeTanAndBitan(face: Face): { tangent: Vector3, bitangent: Vector3 } {
+    private static computeTanAndBitan(vertexCoords: Vector3[], textureCoords: Vector2[]): { tangent: Vector3, bitangent: Vector3 } {
 
-        const deltaPos1 = this.subtractVector3(face.vertices[1].coord, face.vertices[0].coord);
-        const deltaPos2 = this.subtractVector3(face.vertices[2].coord, face.vertices[0].coord);
+        const deltaPos1 = this.subtractVector3(vertexCoords[1], vertexCoords[0]);
+        const deltaPos2 = this.subtractVector3(vertexCoords[2], vertexCoords[0]);
 
-        const deltaUV1 = this.subtractVector2(face.vertices[1].textureCoord, face.vertices[0].textureCoord);
-        const deltaUV2 = this.subtractVector2(face.vertices[2].textureCoord, face.vertices[0].textureCoord);
+        const deltaUV1 = this.subtractVector2(textureCoords[1], textureCoords[0]);
+        const deltaUV2 = this.subtractVector2(textureCoords[2], textureCoords[0]);
 
         const r = 1 / (deltaUV1.u * deltaUV2.v - deltaUV1.v * deltaUV2.u);
         const tangent = this.multiplyVector3(this.subtractVector3(this.multiplyVector3(deltaPos1, deltaUV2.v), this.multiplyVector3(deltaPos2, deltaUV1.v)), r);

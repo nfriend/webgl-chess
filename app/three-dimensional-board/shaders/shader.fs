@@ -16,15 +16,14 @@ uniform mat4 projectionMatrix, modelViewMatrix, normalMatrix;
 
 #define NUM_LIGHTS 4
 uniform PointLight lights[NUM_LIGHTS];
+varying vec3 passedLightDirection[NUM_LIGHTS];
 
 // const vec3 lightPos = vec3(-1.0, 1.0, 1.0);
 // const vec3 diffuseColor = vec3(0.5, 0.5, 0.5);
 // const vec3 specColor = vec3(1.0, 1.0, 1.0);
 // const vec3 ambientColor = vec3(0.05, 0.05, 0.05);
 
-vec4 calculateLight(PointLight light, vec3 normal, vec3 fragmentPosition, vec4 textureColor) {
-    vec3 lightDirection = normalize(light.position - fragmentPosition);
-
+vec4 calculateLight(PointLight light, vec3 normal, vec3 lightDirection, vec4 textureColor) {
     float diffuseAmount = max(dot(lightDirection, normal), 0.0);
 
     vec3 reflectDirection = reflect(-lightDirection, normal);
@@ -45,7 +44,7 @@ void main() {
 
     vec4 result = vec4(0.0, 0.0, 0.0, 0.0);
     for(int i = 0; i < NUM_LIGHTS; i++) {
-        result += calculateLight(lights[i], normal, passedVertexPosition, textureColor);
+        result += calculateLight(lights[i], normal, passedLightDirection[i], textureColor);
     }
 
     gl_FragColor = result;

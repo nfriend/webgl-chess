@@ -19,12 +19,16 @@ export abstract class BaseObject implements Renderable {
     private vertexColorAttribute: number;
     private vertexNormalAttribute: number;
     private vertexTextureCoordsAttribute: number;
+    private vertexTangentAttribute: number;
+    private vertexBitangentAttribute: number;
 
     private vertexPositionBuffer: WebGLBuffer;
     private vertexColorBuffer: WebGLBuffer;
     private vertexNormalBuffer: WebGLBuffer;
     private verticesIndexBuffer: WebGLBuffer;
     private vertexTextureCoordsBuffer: WebGLBuffer;
+    private vertexTangentBuffer: WebGLBuffer;
+    private vertexBitangentBuffer: WebGLBuffer;
 
     constructor(private gl: WebGLRenderingContext, private shaderProgram: WebGLProgram, protected obj: Obj, protected textureImage?: HTMLImageElement) {
     }
@@ -40,6 +44,10 @@ export abstract class BaseObject implements Renderable {
         this.gl.enableVertexAttribArray(this.vertexNormalAttribute);
         this.vertexTextureCoordsAttribute = this.gl.getAttribLocation(this.shaderProgram, 'vertexTextureCoords');
         this.gl.enableVertexAttribArray(this.vertexTextureCoordsAttribute);
+        this.vertexTangentAttribute = this.gl.getAttribLocation(this.shaderProgram, 'vertexTangent');
+        this.gl.enableVertexAttribArray(this.vertexTangentAttribute);
+        this.vertexBitangentAttribute = this.gl.getAttribLocation(this.shaderProgram, 'vertexBitangent');
+        this.gl.enableVertexAttribArray(this.vertexBitangentAttribute);
     }
 
     public initializeBuffers() {
@@ -65,6 +73,14 @@ export abstract class BaseObject implements Renderable {
         this.vertexTextureCoordsBuffer = this.gl.createBuffer();
         this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.vertexTextureCoordsBuffer);
         this.gl.bufferData(this.gl.ARRAY_BUFFER, new Float32Array(this.obj.renderData.textureCoords), this.gl.STATIC_DRAW);
+
+        this.vertexTangentBuffer = this.gl.createBuffer();
+        this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.vertexTangentBuffer);
+        this.gl.bufferData(this.gl.ARRAY_BUFFER, new Float32Array(this.obj.renderData.vertexTangents), this.gl.STATIC_DRAW);
+
+        this.vertexBitangentBuffer = this.gl.createBuffer();
+        this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.vertexBitangentBuffer);
+        this.gl.bufferData(this.gl.ARRAY_BUFFER, new Float32Array(this.obj.renderData.vertexBitangents), this.gl.STATIC_DRAW);
 
         this.verticesIndexBuffer = this.gl.createBuffer();
         this.gl.bindBuffer(this.gl.ELEMENT_ARRAY_BUFFER, this.verticesIndexBuffer);
@@ -92,6 +108,11 @@ export abstract class BaseObject implements Renderable {
         this.gl.vertexAttribPointer(this.vertexNormalAttribute, 3, this.gl.FLOAT, false, 0, 0);
         this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.vertexTextureCoordsBuffer);
         this.gl.vertexAttribPointer(this.vertexTextureCoordsAttribute, 2, this.gl.FLOAT, false, 0, 0);
+        this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.vertexTangentBuffer);
+        this.gl.vertexAttribPointer(this.vertexTangentAttribute, 3, this.gl.FLOAT, false, 0, 0);
+        this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.vertexBitangentBuffer);
+        this.gl.vertexAttribPointer(this.vertexBitangentAttribute, 3, this.gl.FLOAT, false, 0, 0);
+
         this.gl.bindBuffer(this.gl.ELEMENT_ARRAY_BUFFER, this.verticesIndexBuffer);
 
         let projectionUniform = this.gl.getUniformLocation(this.shaderProgram, 'projectionMatrix');
