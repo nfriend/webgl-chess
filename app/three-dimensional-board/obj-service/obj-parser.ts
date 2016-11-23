@@ -8,10 +8,15 @@ class Vector3 {
     z: number;
 }
 
+class Vector2 {
+    u: number;
+    v: number;
+}
+
 class Vertex {
     coord: Vector3;
     normal: Vector3;
-    textureCoord: { u: number; v: number; };
+    textureCoord: Vector2;
     originalIndex: number;
 }
 
@@ -24,7 +29,7 @@ class Face {
 class ObjRawData {
     comments: string[] = [];
     vertices: Vector3[] = [];
-    textureCoords: { u: number; v: number; }[] = [];
+    textureCoords: Vector2[] = [];
     vertexNormals: Vector3[] = [];
     faces: {
         vertexIndex: number;
@@ -41,6 +46,8 @@ class ObjRenderData {
     vertexNormals: number[] = [];
     textureCoords: number[] = [];
     vertexIndices: number[] = [];
+    vertexTangents: number[] = [];
+    vertexBitangents: number[] = [];
 }
 
 export class Obj {
@@ -105,14 +112,54 @@ export class ObjParser {
                     const rawTextureCoord = parsedObj.rawData.textureCoords[faceIndices.textureCoordIndex - 1];
                     parsedObj.renderData.textureCoords.push(rawTextureCoord.u, rawTextureCoord.v)
                 } else {
-                    parsedObj.renderData.textureCoords.push(0.0, 0.0);
+                    throw `Error while parsing .obj file.  Face didn't provide a texture coordinate index`;
                 }
+
+                
 
                 parsedObj.renderData.vertexIndices.push(vertexIndex++);
             });
         });
 
         return parsedObj;
+    }
+
+    private static computeTanAndBitan(face: Face): { tangent: Vector3, bitangent: Vector3 } {
+
+        const deltaPos1 = this.subtractVector3(face.vertices[1].coord, face.vertices[0].coord);
+        const deltaPos2 = this.subtractVector3(face.vertices[2].coord, face.vertices[0].coord);
+
+        const deltaUV1 = this.subtractVector2(face.vertices[1].textureCoord, face.vertices[0].textureCoord);
+        const deltaUV2 = this.subtractVector2(face.vertices[2].textureCoord, face.vertices[0].textureCoord);
+
+        const r = 1 / (deltaUV1.u * deltaUV2.v - deltaUV1.v * deltaUV2.u);
+        const tangent = this.multiplyVector3(this.subtractVector3(this.multiplyVector3(deltaPos1, deltaUV2.v), this.multiplyVector3(deltaPos2, deltaUV1.v)), r);
+        const bitangent = this.multiplyVector3(this.subtractVector3(this.multiplyVector3(deltaPos2, deltaUV1.u), this.multiplyVector3(deltaPos1, deltaUV2.u)), r);
+
+        return { tangent, bitangent };
+    }
+
+    private static multiplyVector3(vector1: Vector3, scalar: number): Vector3 {
+        return {
+            x: vector1.x * scalar,
+            y: vector1.y * scalar,
+            z: vector1.z * scalar
+        };
+    }
+
+    private static subtractVector3(vector1: Vector3, vector2: Vector3): Vector3 {
+        return {
+            x: vector1.x - vector2.x,
+            y: vector1.y - vector2.y,
+            z: vector1.z - vector2.z
+        };
+    }
+
+    private static subtractVector2(vector1: Vector2, vector2: Vector2): Vector2 {
+        return {
+            u: vector1.u - vector2.u,
+            v: vector1.v - vector2.v,
+        };
     }
 }
 
