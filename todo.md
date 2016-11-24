@@ -1,6 +1,8 @@
 # TODO
 
 - Add support for promotions
+  - Substitute pawn piece for replacement piece
+  - Where should the replacement go if captured?
 
 Current error during a promotion:
 
