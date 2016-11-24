@@ -60,9 +60,13 @@ export class ChessBoardService {
     }
 
     private movePiece(move: chessjs.Move) {
+
         const pieceToMove = this.pieces.filter(p => p.squareString === move.from)[0];
+
+        // if a piece was captured by this move, trigger the capture animation
         this.pieces.filter(p => p.squareString == move.to).forEach(p => p.capture());
 
+        // kingside castle
         if (move.flags.indexOf('k') !== -1) {
             if (move.color === 'w') {
                 this.pieces.filter(p => p.squareString === 'h1')[0].moveTo('f1', 'hop');
@@ -71,6 +75,7 @@ export class ChessBoardService {
             }
         }
 
+        // queenside castle
         if (move.flags.indexOf('q') !== -1) {
             if (move.color === 'w') {
                 this.pieces.filter(p => p.squareString === 'a1')[0].moveTo('d1', 'hop');
@@ -79,6 +84,12 @@ export class ChessBoardService {
             }
         }
 
+        // promotion - TODO
+        if (move.promotion) {
+            this.$log.info('Promotion!');
+        }
+
+        // trigger the move animation of the piece that was moved
         pieceToMove.moveTo(move.to);
         this.lastMoveTime = Date.now();
         this.isThinking = false;
@@ -93,7 +104,6 @@ export class ChessBoardService {
         ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'].forEach((letter, index) => {
             this.pieces.push(new Pieces.Pawn(this.gl, this.shaderProgram, this.assetService.objs['pawnDark'], darkWood, Pieces.PieceTeam.Black, letter + '7', 'z' + (index + 1)));
         });
-
 
         this.pieces.push(new Pieces.Rook(this.gl, this.shaderProgram, this.assetService.objs['rook'], darkWood, Pieces.PieceTeam.Black, 'a8', 'y1'));
         this.pieces.push(new Pieces.Rook(this.gl, this.shaderProgram, this.assetService.objs['rook'], darkWood, Pieces.PieceTeam.Black, 'h8', 'y8'));

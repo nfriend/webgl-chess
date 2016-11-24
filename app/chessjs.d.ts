@@ -20,7 +20,7 @@ declare namespace chessjs {
         insufficient_material(): boolean;
         load(fen: string): boolean;
         load_pgn(pgnMoves: string[], options?: { newline_char?: string, sloppy?: boolean }): boolean;
-        move(move: string | { from: string; to: string, promotion?: boolean }, options?: { sloppy: boolean }): Move;
+        move(move: string | { from: string; to: string, promotion?: string }, options?: { sloppy: boolean }): Move;
         moves(options?: { square?: string; verbose?: boolean }): string[] | Move[];
         pgn(options?: { max_width?: number; newline_char?: string;  }): string;
         put(piece: ChessPiece, square: string): boolean;
@@ -55,6 +55,6 @@ declare namespace chessjs {
         piece: string;
         san?: string;
         captured?: boolean;
-        promotion?: boolean;
+        promotion?: string;
     }
 }

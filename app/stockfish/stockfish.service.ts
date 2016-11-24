@@ -65,14 +65,16 @@ export class StockfishService {
             this.engine.postMessage('go movetime ' + this.THINKING_TIME);
             return this.waitUntil(/^bestmove/);
         }).then(message => {
-            let bestMove = message.trim().split(/\s+/)[1];
-            let move = chess.move({
+            const bestMove = message.trim().split(/\s+/)[1];
+            const attemptedMove = {
                 from: bestMove.substr(0, 2),
-                to: bestMove.substr(2, 2)
-            });
+                to: bestMove.substr(2, 2),
+                promotion: bestMove.length > 4 ? bestMove.substr(4, 1) : undefined
+            }
+            const move = chess.move(attemptedMove);
 
             if (!move) {
-                this.$log.error('Unable to complete move provided by stockfish! Stockfish returned: "' + message + '"');
+                this.$log.error('Unable to complete move provided by stockfish! Stockfish returned: "' + message + '".  Attempted move: ', attemptedMove);
             }
 
             return move;

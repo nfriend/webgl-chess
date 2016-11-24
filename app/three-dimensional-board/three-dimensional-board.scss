@@ -10,6 +10,12 @@
         height: 100%;
         opacity: 0;
         transition: 1s opacity ease-in-out;
+        cursor: default;
+        cursor: -webkit-grab;
+
+        &:active {
+            cursor: -webkit-grabbing;
+        }
 
         &.faded-in {
             opacity: 1;
