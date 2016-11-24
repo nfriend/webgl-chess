@@ -21,24 +21,31 @@ export class ChessPiece extends BaseObject {
         return this._squareString;
     }
 
-    constructor(gl: WebGLRenderingContext, shaderProgram: WebGLProgram, obj: Obj, textureImage: HTMLImageElement, pieceTeam: PieceTeam, squareString: string) {
+    private capturedSquareString: string;
+
+    constructor(gl: WebGLRenderingContext, shaderProgram: WebGLProgram, obj: Obj, textureImage: HTMLImageElement, pieceTeam: PieceTeam, squareString: string, capturedSquareString: string) {
         super(gl, shaderProgram, obj, textureImage);
         this.pieceTeam = pieceTeam;
         this._squareString = squareString;
         this._location = squareToCoordsMap[squareString];
+        this.capturedSquareString = capturedSquareString;
     }
 
-    public moveTo(squareString: string, animationType: AnimationType = 'slide', animationDuration = 2000) {
+    public capture() {
+        this.moveTo(this.capturedSquareString, 'hop', 3000, 1000);
+    }
+
+    public moveTo(squareString: string, animationType: AnimationType = 'slide', animationDuration = 2000, animationDelay = 0) {
         this.originalLocation = this.location;
         this._squareString = squareString;
-        this.animationStartTime = Date.now();
+        this.animationStartTime = Date.now() + animationDelay;
         this.animationDuration = animationDuration;
         this.animationType = animationType;
         this.isAnimating = true;
     }
 
     protected update() {
-        if (this.isAnimating) {
+        if (this.isAnimating && Date.now() >= this.animationStartTime) {
             this.animationType === 'slide' ? this.applySlide() : this.applyHop();
         }
     }
@@ -68,7 +75,8 @@ export class ChessPiece extends BaseObject {
         if (!halfWayDone) {
             newY = easingFunctions.easeOutCubic(currentStep, this.originalLocation.elements[1], 4, this.animationDuration / 2);
         } else {
-            newY = easingFunctions.easeInCubic(currentStep - (this.animationDuration / 2), squareToCoordsMap[this.squareString].elements[1] + 4, -4, this.animationDuration / 2);
+            const deltaY = squareToCoordsMap[this.squareString].elements[1] - (this.originalLocation.elements[1] + 4);
+            newY = easingFunctions.easeInCubic(currentStep - (this.animationDuration / 2), this.originalLocation.elements[1] + 4, deltaY, this.animationDuration / 2);
         }
 
         this._location = $V([newX, newY, newZ]);

@@ -66,10 +66,16 @@ export class StockfishService {
             return this.waitUntil(/^bestmove/);
         }).then(message => {
             let bestMove = message.trim().split(/\s+/)[1];
-            return chess.move({
+            let move = chess.move({
                 from: bestMove.substr(0, 2),
                 to: bestMove.substr(2, 2)
             });
+
+            if (!move) {
+                this.$log.error('Unable to complete move provided by stockfish! Stockfish returned: "' + message + '"');
+            }
+
+            return move;
         });
     }
 }
