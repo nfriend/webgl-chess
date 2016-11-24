@@ -8,7 +8,7 @@ const routeConfig = ($stateProvider: ng.ui.IStateProvider, $urlRouterProvider: n
 
     $stateProvider.state({
         name: 'webglchess.threedimensional',
-        url: '/3d?showMetrics',
+        url: '/3d?showMetrics&moveHistory&stockfishLog',
         template: '<main-layout board-to-show="3d"></main-layout>'
     });
 
