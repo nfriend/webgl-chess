@@ -5,4 +5,5 @@
         <p>Loading&hellip;</p>
         <md-progress-linear class="md-primary md-hue-2" md-mode="determinate" value="{{vm.loadingValue}}"></md-progress-linear>
     </div>
+    <div class="game-message" ng-class="{ 'showing': vm.messageVisible }">{{vm.messageText}}</div>
 </div>

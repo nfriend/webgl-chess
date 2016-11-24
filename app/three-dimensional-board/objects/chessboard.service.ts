@@ -13,7 +13,7 @@ import { Light } from './light';
 export class ChessBoardService {
 
     public static injectionName = 'WebGLChess.ChessBoardService';
-    public static $inject = ['$log', AssetService.injectionName, StockfishService.injectionName, ChessJsService.injectionName];
+    public static $inject = ['$log', '$rootScope', AssetService.injectionName, StockfishService.injectionName, ChessJsService.injectionName];
 
     public pieces: Pieces.ChessPiece[] = [];
     public squares: Square[] = [];
@@ -23,7 +23,12 @@ export class ChessBoardService {
     private gl: WebGLRenderingContext;
     private shaderProgram: WebGLProgram;
 
-    constructor(private $log: ng.ILogService, private assetService: AssetService, private stockfishService: StockfishService, private chessJsService: ChessJsService) {
+    private lastMoveTime: number;
+    private get msBetweenMoves() { return 0; }
+    private isThinking = false;
+    private isGameOver = false;
+
+    constructor(private $log: ng.ILogService, private $rootScope: ng.IRootScopeService, private assetService: AssetService, private stockfishService: StockfishService, private chessJsService: ChessJsService) {
     }
 
     public initialize(gl: WebGLRenderingContext, shaderProgram: WebGLProgram) {
@@ -32,33 +37,51 @@ export class ChessBoardService {
         this.initPieces();
         this.initLights();
 
-        setTimeout(() => { this.executeNextMove(); }, 200);
+        // wait 200 ms and then start the first move
+        this.lastMoveTime = Date.now() - this.msBetweenMoves + 200;
+
+        // sync this board with the 2D board
+        this.chessJsService.chess.history({ verbose: true }).forEach(move => {
+            this.movePiece(move);
+        });
     }
 
     private executeNextMove() {
-        this.stockfishService.executeNextMove(this.chessJsService.chess).then(move => {
-            const pieceToMove = this.pieces.filter(p => p.squareString === move.from)[0];
-            this.pieces = this.pieces.filter(p => p.squareString !== move.to);
-
-            if (move.flags.indexOf('k') !== -1) {
-                if (move.color === 'w') {
-                    this.pieces.filter(p => p.squareString === 'h1')[0].moveTo('f1', 'hop');
-                } else {
-                    this.pieces.filter(p => p.squareString === 'h8')[0].moveTo('f8', 'hop');
+        this.isThinking = true;
+        this.stockfishService
+            .executeNextMove(this.chessJsService.chess)
+            .then(move => this.movePiece(move))
+            .then(() => {
+                if (this.chessJsService.chess.in_checkmate() || this.chessJsService.chess.in_draw() || this.chessJsService.chess.in_stalemate()) {
+                    this.isGameOver = true;
+                    this.$log.info('Game over!');
                 }
-            }
+            });
+    }
 
-            if (move.flags.indexOf('q') !== -1) {
-                if (move.color === 'w') {
-                    this.pieces.filter(p => p.squareString === 'a1')[0].moveTo('d1', 'hop');
-                } else {
-                    this.pieces.filter(p => p.squareString === 'a8')[0].moveTo('d8', 'hop');
-                }
-            }
+    private movePiece(move: chessjs.Move) {
+        const pieceToMove = this.pieces.filter(p => p.squareString === move.from)[0];
+        this.pieces = this.pieces.filter(p => p.squareString !== move.to);
 
-            pieceToMove.moveTo(move.to);
-            setTimeout(() => { this.executeNextMove(); }, 2000);
-        });
+        if (move.flags.indexOf('k') !== -1) {
+            if (move.color === 'w') {
+                this.pieces.filter(p => p.squareString === 'h1')[0].moveTo('f1', 'hop');
+            } else {
+                this.pieces.filter(p => p.squareString === 'h8')[0].moveTo('f8', 'hop');
+            }
+        }
+
+        if (move.flags.indexOf('q') !== -1) {
+            if (move.color === 'w') {
+                this.pieces.filter(p => p.squareString === 'a1')[0].moveTo('d1', 'hop');
+            } else {
+                this.pieces.filter(p => p.squareString === 'a8')[0].moveTo('d8', 'hop');
+            }
+        }
+
+        pieceToMove.moveTo(move.to);
+        this.lastMoveTime = Date.now();
+        this.isThinking = false;
     }
 
     private initPieces() {
@@ -122,7 +145,7 @@ export class ChessBoardService {
                 // randomly rotate to avoid repetition
                 const rotationAmount = Math.floor(Math.random() * 4) * 90;
                 square.initialModelViewMatrix = Matrix.RotationY(Utility.degreesToRadians(rotationAmount)).ensure4x4();
-                
+
                 // randomly flip as well
                 if (Math.random() > .5) {
                     square.initialModelViewMatrix = Matrix.RotationX(Utility.degreesToRadians(180)).ensure4x4().multiply(square.initialModelViewMatrix);
@@ -133,7 +156,7 @@ export class ChessBoardService {
         }
 
         // border
-        this.border = new Border(this.gl, this.shaderProgram, this.assetService.objs['boardBorder'], darkWood);   
+        this.border = new Border(this.gl, this.shaderProgram, this.assetService.objs['boardBorder'], darkWood);
     }
 
     private initLights() {
@@ -158,6 +181,11 @@ export class ChessBoardService {
     }
 
     public draw(projection: Matrix, modelView: Matrix) {
+
+        if (!this.isGameOver && !this.isThinking && Date.now() - this.lastMoveTime > this.msBetweenMoves) {
+            this.executeNextMove();
+        }
+
         this.getAllObjects().forEach(p => {
             p.draw(projection, modelView, this.lights);
         });
