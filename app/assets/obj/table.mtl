@@ -1,0 +1,13 @@
+# Blender MTL File: 'table.blend'
+# Material Count: 1
+
+newmtl wood
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.627451 0.627451 0.627451
+Ks 0.476471 0.476471 0.476471
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd /Users/nathanfriend/Documents/GitHub/webgl-chess/app/assets/textures/light-wood.jpg

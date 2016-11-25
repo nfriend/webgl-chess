@@ -27,7 +27,8 @@ export class AssetService {
         queen: 'assets/obj/queen.obj',
         king: 'assets/obj/king.obj',
         squareDark: 'assets/obj/square-dark.obj',
-        boardBorder: 'assets/obj/board-border.obj'
+        boardBorder: 'assets/obj/board-border.obj',
+        table: 'assets/obj/table.obj'
     };
 
     private textureFilepaths: { [textureName: string]: string } = {

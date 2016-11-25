@@ -3,6 +3,7 @@ import { AssetService } from '../obj-service/obj.service';
 import { Utility } from '../../utility/utility';
 import { Square } from './square';
 import { Border } from './border';
+import { Table } from './table';
 import { BaseObject } from './base-object';
 import { squareToCoordsMap, claimNextAvailableCapturedSpace } from '../square-to-coords-map';
 import { StockfishService } from '../../stockfish/stockfish.service';
@@ -18,6 +19,7 @@ export class ChessBoardService {
     public pieces: Pieces.ChessPiece[] = [];
     public squares: Square[] = [];
     public border: Border;
+    public table: Table;
     public lights: Light[] = [];
 
     private gl: WebGLRenderingContext;
@@ -174,6 +176,9 @@ export class ChessBoardService {
 
         // border
         this.border = new Border(this.gl, this.shaderProgram, this.assetService.objs['boardBorder'], darkWood);
+
+        // table
+        this.table = new Table(this.gl, this.shaderProgram, this.assetService.objs['table'], lightWood);
     }
 
     private initLights() {
@@ -209,7 +214,7 @@ export class ChessBoardService {
     }
 
     private getAllObjects(): Renderable[] {
-        return (<Renderable[]>this.pieces).concat(this.squares).concat([this.border]);
+        return (<Renderable[]>this.pieces).concat(this.squares).concat([this.border, this.table]);
     }
 
     private promotePiece(piece: Pieces.ChessPiece, move: chessjs.Move): ng.IPromise<void> {
