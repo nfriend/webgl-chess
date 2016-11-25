@@ -13,7 +13,7 @@ import { Light } from './light';
 export class ChessBoardService {
 
     public static injectionName = 'WebGLChess.ChessBoardService';
-    public static $inject = ['$log', '$q', AssetService.injectionName, StockfishService.injectionName, ChessJsService.injectionName];
+    public static $inject = ['$log', '$q', '$stateParams', AssetService.injectionName, StockfishService.injectionName, ChessJsService.injectionName];
 
     public pieces: Pieces.ChessPiece[] = [];
     public squares: Square[] = [];
@@ -24,11 +24,14 @@ export class ChessBoardService {
     private shaderProgram: WebGLProgram;
 
     private lastMoveTime: number;
-    private get msBetweenMoves() { return 2000; }
+    private msBetweenMoves = 2000;
     private isThinking = false;
     private isGameOver = false;
 
-    constructor(private $log: ng.ILogService, private $q: ng.IQService, private assetService: AssetService, private stockfishService: StockfishService, private chessJsService: ChessJsService) {
+    constructor(private $log: ng.ILogService, private $q: ng.IQService, private $stateParams: ng.ui.IStateParamsService, private assetService: AssetService, private stockfishService: StockfishService, private chessJsService: ChessJsService) {
+        if ($stateParams['msBetweenTurns']) {
+            this.msBetweenMoves = parseInt($stateParams['msBetweenTurns'], 10);
+        }
     }
 
     public initialize(gl: WebGLRenderingContext, shaderProgram: WebGLProgram) {
