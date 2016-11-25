@@ -48,7 +48,7 @@ declare namespace chessjs {
     }
 
     interface Move {
-        color: string;
+        color: 'b' | 'w';
         from: string;
         to: string;
         flags: string;

@@ -4,7 +4,7 @@ import { Utility } from '../../utility/utility';
 import { Square } from './square';
 import { Border } from './border';
 import { BaseObject } from './base-object';
-import { squareToCoordsMap } from '../square-to-coords-map';
+import { squareToCoordsMap, claimNextAvailableCapturedSpace } from '../square-to-coords-map';
 import { StockfishService } from '../../stockfish/stockfish.service';
 import { ChessJsService } from '../../chessjs/chessjs.service';
 import { Renderable } from './renderable';
@@ -13,7 +13,7 @@ import { Light } from './light';
 export class ChessBoardService {
 
     public static injectionName = 'WebGLChess.ChessBoardService';
-    public static $inject = ['$log', '$rootScope', AssetService.injectionName, StockfishService.injectionName, ChessJsService.injectionName];
+    public static $inject = ['$log', '$q', AssetService.injectionName, StockfishService.injectionName, ChessJsService.injectionName];
 
     public pieces: Pieces.ChessPiece[] = [];
     public squares: Square[] = [];
@@ -28,7 +28,7 @@ export class ChessBoardService {
     private isThinking = false;
     private isGameOver = false;
 
-    constructor(private $log: ng.ILogService, private $rootScope: ng.IRootScopeService, private assetService: AssetService, private stockfishService: StockfishService, private chessJsService: ChessJsService) {
+    constructor(private $log: ng.ILogService, private $q: ng.IQService, private assetService: AssetService, private stockfishService: StockfishService, private chessJsService: ChessJsService) {
     }
 
     public initialize(gl: WebGLRenderingContext, shaderProgram: WebGLProgram) {
@@ -61,7 +61,7 @@ export class ChessBoardService {
 
     private movePiece(move: chessjs.Move) {
 
-        const pieceToMove = this.pieces.filter(p => p.squareString === move.from)[0];
+        const pieceToMove = this.pieces.filter(p => p.squareString === move.from && p.isActive)[0];
 
         // if a piece was captured by this move, trigger the capture animation
         this.pieces.filter(p => p.squareString == move.to).forEach(p => p.capture());
@@ -69,30 +69,34 @@ export class ChessBoardService {
         // kingside castle
         if (move.flags.indexOf('k') !== -1) {
             if (move.color === 'w') {
-                this.pieces.filter(p => p.squareString === 'h1')[0].moveTo('f1', 'hop');
+                this.pieces.filter(p => p.squareString === 'h1' && p.isActive)[0].moveTo('f1', 'hop');
             } else {
-                this.pieces.filter(p => p.squareString === 'h8')[0].moveTo('f8', 'hop');
+                this.pieces.filter(p => p.squareString === 'h8' && p.isActive)[0].moveTo('f8', 'hop');
             }
         }
 
         // queenside castle
         if (move.flags.indexOf('q') !== -1) {
             if (move.color === 'w') {
-                this.pieces.filter(p => p.squareString === 'a1')[0].moveTo('d1', 'hop');
+                this.pieces.filter(p => p.squareString === 'a1' && p.isActive)[0].moveTo('d1', 'hop');
             } else {
-                this.pieces.filter(p => p.squareString === 'a8')[0].moveTo('d8', 'hop');
+                this.pieces.filter(p => p.squareString === 'a8' && p.isActive)[0].moveTo('d8', 'hop');
             }
         }
 
-        // promotion - TODO
+        // promotion
         if (move.promotion) {
-            this.$log.info('Promotion!');
-        }
+            this.promotePiece(pieceToMove, move).then(() => {
+                this.lastMoveTime = Date.now();
+                this.isThinking = false;
+            });
+        } else {
 
-        // trigger the move animation of the piece that was moved
-        pieceToMove.moveTo(move.to);
-        this.lastMoveTime = Date.now();
-        this.isThinking = false;
+            // trigger the move animation of the piece that was moved
+            pieceToMove.moveTo(move.to);
+            this.lastMoveTime = Date.now();
+            this.isThinking = false;
+        }
     }
 
     private initPieces() {
@@ -102,39 +106,39 @@ export class ChessBoardService {
 
         // black
         ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'].forEach((letter, index) => {
-            this.pieces.push(new Pieces.Pawn(this.gl, this.shaderProgram, this.assetService.objs['pawnDark'], darkWood, Pieces.PieceTeam.Black, letter + '7', 'z' + (index + 1)));
+            this.pieces.push(new Pieces.Pawn(this.$q, this.gl, this.shaderProgram, this.assetService.objs['pawnDark'], darkWood, Pieces.PieceTeam.Black, letter + '7', 'z' + (index + 1)));
         });
 
-        this.pieces.push(new Pieces.Rook(this.gl, this.shaderProgram, this.assetService.objs['rook'], darkWood, Pieces.PieceTeam.Black, 'a8', 'y1'));
-        this.pieces.push(new Pieces.Rook(this.gl, this.shaderProgram, this.assetService.objs['rook'], darkWood, Pieces.PieceTeam.Black, 'h8', 'y8'));
+        this.pieces.push(new Pieces.Rook(this.$q, this.gl, this.shaderProgram, this.assetService.objs['rook'], darkWood, Pieces.PieceTeam.Black, 'a8', 'y1'));
+        this.pieces.push(new Pieces.Rook(this.$q, this.gl, this.shaderProgram, this.assetService.objs['rook'], darkWood, Pieces.PieceTeam.Black, 'h8', 'y8'));
 
-        this.pieces.push(new Pieces.Knight(this.gl, this.shaderProgram, this.assetService.objs['knight'], darkWood, Pieces.PieceTeam.Black, 'b8', 'y2'));
-        this.pieces.push(new Pieces.Knight(this.gl, this.shaderProgram, this.assetService.objs['knight'], darkWood, Pieces.PieceTeam.Black, 'g8', 'y7'));
+        this.pieces.push(new Pieces.Knight(this.$q, this.gl, this.shaderProgram, this.assetService.objs['knight'], darkWood, Pieces.PieceTeam.Black, 'b8', 'y2'));
+        this.pieces.push(new Pieces.Knight(this.$q, this.gl, this.shaderProgram, this.assetService.objs['knight'], darkWood, Pieces.PieceTeam.Black, 'g8', 'y7'));
 
-        this.pieces.push(new Pieces.Bishop(this.gl, this.shaderProgram, this.assetService.objs['bishop'], darkWood, Pieces.PieceTeam.Black, 'c8', 'y3'));
-        this.pieces.push(new Pieces.Bishop(this.gl, this.shaderProgram, this.assetService.objs['bishop'], darkWood, Pieces.PieceTeam.Black, 'f8', 'y6'));
+        this.pieces.push(new Pieces.Bishop(this.$q, this.gl, this.shaderProgram, this.assetService.objs['bishop'], darkWood, Pieces.PieceTeam.Black, 'c8', 'y3'));
+        this.pieces.push(new Pieces.Bishop(this.$q, this.gl, this.shaderProgram, this.assetService.objs['bishop'], darkWood, Pieces.PieceTeam.Black, 'f8', 'y6'));
 
-        this.pieces.push(new Pieces.Queen(this.gl, this.shaderProgram, this.assetService.objs['queen'], darkWood, Pieces.PieceTeam.Black, 'd8', 'y4'));
+        this.pieces.push(new Pieces.Queen(this.$q, this.gl, this.shaderProgram, this.assetService.objs['queen'], darkWood, Pieces.PieceTeam.Black, 'd8', 'y4'));
 
-        this.pieces.push(new Pieces.King(this.gl, this.shaderProgram, this.assetService.objs['king'], darkWood, Pieces.PieceTeam.Black, 'e8', 'y5'));
+        this.pieces.push(new Pieces.King(this.$q, this.gl, this.shaderProgram, this.assetService.objs['king'], darkWood, Pieces.PieceTeam.Black, 'e8', 'y5'));
 
         // white
         ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'].forEach((letter, index) => {
-            this.pieces.push(new Pieces.Pawn(this.gl, this.shaderProgram, this.assetService.objs['pawnLight'], lightWood, Pieces.PieceTeam.White, letter + '2', 'i' + (8 - index)));
+            this.pieces.push(new Pieces.Pawn(this.$q, this.gl, this.shaderProgram, this.assetService.objs['pawnLight'], lightWood, Pieces.PieceTeam.White, letter + '2', 'i' + (8 - index)));
         });
 
-        this.pieces.push(new Pieces.Rook(this.gl, this.shaderProgram, this.assetService.objs['rook'], lightWood, Pieces.PieceTeam.White, 'a1', 'j1'));
-        this.pieces.push(new Pieces.Rook(this.gl, this.shaderProgram, this.assetService.objs['rook'], lightWood, Pieces.PieceTeam.White, 'h1', 'j8'));
+        this.pieces.push(new Pieces.Rook(this.$q, this.gl, this.shaderProgram, this.assetService.objs['rook'], lightWood, Pieces.PieceTeam.White, 'a1', 'j1'));
+        this.pieces.push(new Pieces.Rook(this.$q, this.gl, this.shaderProgram, this.assetService.objs['rook'], lightWood, Pieces.PieceTeam.White, 'h1', 'j8'));
 
-        this.pieces.push(new Pieces.Knight(this.gl, this.shaderProgram, this.assetService.objs['knight'], lightWood, Pieces.PieceTeam.White, 'b1', 'j2'));
-        this.pieces.push(new Pieces.Knight(this.gl, this.shaderProgram, this.assetService.objs['knight'], lightWood, Pieces.PieceTeam.White, 'g1', 'j7'));
+        this.pieces.push(new Pieces.Knight(this.$q, this.gl, this.shaderProgram, this.assetService.objs['knight'], lightWood, Pieces.PieceTeam.White, 'b1', 'j2'));
+        this.pieces.push(new Pieces.Knight(this.$q, this.gl, this.shaderProgram, this.assetService.objs['knight'], lightWood, Pieces.PieceTeam.White, 'g1', 'j7'));
 
-        this.pieces.push(new Pieces.Bishop(this.gl, this.shaderProgram, this.assetService.objs['bishop'], lightWood, Pieces.PieceTeam.White, 'c1', 'j3'));
-        this.pieces.push(new Pieces.Bishop(this.gl, this.shaderProgram, this.assetService.objs['bishop'], lightWood, Pieces.PieceTeam.White, 'f1', 'j6'));
+        this.pieces.push(new Pieces.Bishop(this.$q, this.gl, this.shaderProgram, this.assetService.objs['bishop'], lightWood, Pieces.PieceTeam.White, 'c1', 'j3'));
+        this.pieces.push(new Pieces.Bishop(this.$q, this.gl, this.shaderProgram, this.assetService.objs['bishop'], lightWood, Pieces.PieceTeam.White, 'f1', 'j6'));
 
-        this.pieces.push(new Pieces.Queen(this.gl, this.shaderProgram, this.assetService.objs['queen'], lightWood, Pieces.PieceTeam.White, 'd1', 'j4'));
+        this.pieces.push(new Pieces.Queen(this.$q, this.gl, this.shaderProgram, this.assetService.objs['queen'], lightWood, Pieces.PieceTeam.White, 'd1', 'j4'));
 
-        this.pieces.push(new Pieces.King(this.gl, this.shaderProgram, this.assetService.objs['king'], lightWood, Pieces.PieceTeam.White, 'e1', 'j5'));
+        this.pieces.push(new Pieces.King(this.$q, this.gl, this.shaderProgram, this.assetService.objs['king'], lightWood, Pieces.PieceTeam.White, 'e1', 'j5'));
 
         // these dark pieces should be rotated 180 degrees
         this.pieces.filter(p => p.pieceTeam === Pieces.PieceTeam.Black && (p.type === Pieces.PieceType.Knight || p.type === Pieces.PieceType.Bishop)).forEach(p => {
@@ -203,5 +207,42 @@ export class ChessBoardService {
 
     private getAllObjects(): Renderable[] {
         return (<Renderable[]>this.pieces).concat(this.squares).concat([this.border]);
+    }
+
+    private promotePiece(piece: Pieces.ChessPiece, move: chessjs.Move): ng.IPromise<void> {
+
+        // trigger the move animation of the piece that was moved,
+        // and then do the substitution
+        return piece.moveTo(move.to).then(() => {
+
+            const team = move.color === 'b' ? Pieces.PieceTeam.Black : Pieces.PieceTeam.White;
+            const texture = move.color === 'b' ? this.assetService.textures['darkWood'] : this.assetService.textures['lightWood'];
+            const captureSquare = claimNextAvailableCapturedSpace(move.color);
+
+            // create a new piece to replace the pawn
+            let replacementPiece: Pieces.ChessPiece;
+            if (move.promotion = 'q') {
+                replacementPiece = new Pieces.Queen(this.$q, this.gl, this.shaderProgram, this.assetService.objs['queen'], texture, team, 'promotion', captureSquare);
+            } else if (move.promotion = 'b') {
+                replacementPiece = new Pieces.Bishop(this.$q, this.gl, this.shaderProgram, this.assetService.objs['bishop'], texture, team, 'promotion', captureSquare);
+            } else if (move.promotion = 'r') {
+                replacementPiece = new Pieces.Rook(this.$q, this.gl, this.shaderProgram, this.assetService.objs['rook'], texture, team, 'promotion', captureSquare);
+            } else if (move.promotion = 'k') {
+                replacementPiece = new Pieces.Knight(this.$q, this.gl, this.shaderProgram, this.assetService.objs['rook'], texture, team, 'promotion', captureSquare);
+            }
+
+            // initialize this new piece with WebGL
+            replacementPiece.initializeShaders();
+            replacementPiece.initializeBuffers();
+
+            this.pieces.push(replacementPiece);
+
+            // move the replacement piece to the board
+            replacementPiece.moveTo(piece.squareString);
+
+            // remove the original piece from the board immediately
+            piece.capture(0);
+
+        });
     }
 }

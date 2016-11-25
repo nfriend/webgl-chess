@@ -21,9 +21,12 @@ export class ChessPiece extends BaseObject {
         return this._squareString;
     }
 
-    private capturedSquareString: string;
+    public isActive = true;
 
-    constructor(gl: WebGLRenderingContext, shaderProgram: WebGLProgram, obj: Obj, textureImage: HTMLImageElement, pieceTeam: PieceTeam, squareString: string, capturedSquareString: string) {
+    private capturedSquareString: string;
+    private moveDeferred: ng.IDeferred<void>;
+
+    constructor(private $q: ng.IQService, gl: WebGLRenderingContext, shaderProgram: WebGLProgram, obj: Obj, textureImage: HTMLImageElement, pieceTeam: PieceTeam, squareString: string, capturedSquareString: string) {
         super(gl, shaderProgram, obj, textureImage);
         this.pieceTeam = pieceTeam;
         this._squareString = squareString;
@@ -31,17 +34,28 @@ export class ChessPiece extends BaseObject {
         this.capturedSquareString = capturedSquareString;
     }
 
-    public capture() {
-        this.moveTo(this.capturedSquareString, 'hop', 3000, 1000);
+    public capture(animationDelay = 1000) {
+        this.moveTo(this.capturedSquareString, 'hop', 3000, animationDelay);
+        this.isActive = false;
     }
 
-    public moveTo(squareString: string, animationType: AnimationType = 'slide', animationDuration = 2000, animationDelay = 0) {
+    public moveTo(squareString: string, animationType: AnimationType = 'slide', animationDuration = 2000, animationDelay = 0): ng.IPromise<void> {
+
+        // if we already have a deferred in progress, 
+        // resolve it and create a new one for the current move
+        if (this.moveDeferred) {
+            this.moveDeferred.resolve();
+        }
+        this.moveDeferred = this.$q.defer<void>();
+
         this.originalLocation = this.location;
         this._squareString = squareString;
         this.animationStartTime = Date.now() + animationDelay;
         this.animationDuration = animationDuration;
         this.animationType = animationType;
         this.isAnimating = true;
+
+        return this.moveDeferred.promise;
     }
 
     protected update() {
@@ -61,6 +75,8 @@ export class ChessPiece extends BaseObject {
 
         if (currentStep === this.animationDuration) {
             this.isAnimating = false;
+            this.moveDeferred.resolve();
+            this.moveDeferred = null;
         }
     }
 
@@ -80,6 +96,12 @@ export class ChessPiece extends BaseObject {
         }
 
         this._location = $V([newX, newY, newZ]);
+
+        if (currentStep === this.animationDuration) {
+            this.isAnimating = false;
+            this.moveDeferred.resolve();
+            this.moveDeferred = null;
+        }
     }
 }
 
@@ -94,8 +116,8 @@ export class Rook extends ChessPiece {
 export class Knight extends ChessPiece {
     type = PieceType.Knight;
 
-    public moveTo(squareString: string, animationType: AnimationType = 'hop', animationDuration = 2000) {
-        super.moveTo(squareString, animationType, animationDuration);
+    public moveTo(squareString: string, animationType: AnimationType = 'hop', animationDuration = 2000): ng.IPromise<void> {
+        return super.moveTo(squareString, animationType, animationDuration);
     }
 }
 
