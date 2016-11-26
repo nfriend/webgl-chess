@@ -12,8 +12,9 @@ Final project for HCI 557: Computer Graphics and Geometric Modeling at [Iowa Sta
 
 - Utilizes [Stockfish](https://stockfishchess.org/) Chess AI to generate chess moves for both players client-side
   - Before you ask :smile:: no, you can't move the pieces yourself!  This level of interactivity was beyond the scope of this class project.  This is next on my to-do list if I get bored or inspired.
-- Full camera navigation using mouse (click + drag and scroll wheel), keyboard (arrow keys + `-` and `+`), and mobile gestures (drag to pan, pinch to zoom, two-finger rotate)
+- Full camera navigation using mouse (click + drag and scroll wheel), keyboard (arrow keys and `-` and `+`), and mobile gestures (drag to pan, pinch to zoom, two-finger rotate)
 - Supports standard chess play - castling, substitution, check, etc.
+- Written in vanilla WebGL - no 
 
 ## Options
 
@@ -32,6 +33,7 @@ This project is built with the following technologies:
 - [stockfish-js](https://github.com/exoticorn/stockfish-js) for chess AI, which utilizes [Web Workers](https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Using_web_workers)
 - [chess-js](https://github.com/jhlywa/chess.js) for move validation/piece placement and movement/check detection/etc.
 - [Hammer.js](http://hammerjs.github.io/) for mobile gesture support
+- [Sylvester](http://sylvester.jcoglan.com/) for vector/matrix utilities
 - [stats.js](https://github.com/mrdoob/stats.js/) for WebGL/JavaScript statistics graphs
 - [Robert Penner's Easing Functions](http://robertpenner.com/easing/) for animation easing
 - Angular 1 and Angular Material for UI interaction
@@ -78,7 +80,7 @@ ChessJS was built with a lot of help.  A big thanks to following sources:
 Here's what I used to make `webgl-chess`:
 
 - [Visual Studio Code](https://code.visualstudio.com/) for editing
-- [Fira Code](https://github.com/tonsky/FiraCode) as my editor's code font
+- [Fira Code](https://github.com/tonsky/FiraCode) as my editor's code a
 - [Blender](https://www.blender.org/) and [Gimp](https://www.gimp.org/) for object modeling and texture mapping/editing
 
 
