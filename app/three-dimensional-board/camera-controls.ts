@@ -8,7 +8,7 @@ export class CameraControls {
 
     private MAX_X = 80;
     private MIN_X = 10;
-    private MAX_ZOOM = 45;
+    private MAX_ZOOM = 70;
     private MIN_ZOOM = 15;
     private KEYBOARD_X_SPEED = 1;
     private KEYBOARD_Y_SPEED = 1;

@@ -159,7 +159,7 @@ export class ChessBoardService {
         for (let number = 8; number > 0; number--) {
             ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'].forEach((letter, letterIndex) => {
                 const textureImage = (number + letterIndex) % 2 === 0 ? lightWood : darkWood;
-                const square = new Square(this.gl, this.shaderProgram, this.assetService.objs['squareDark'], textureImage, letter + number);
+                const square = new Square(this.gl, this.shaderProgram, this.assetService.objs['square'], textureImage, letter + number);
 
                 // randomly rotate to avoid repetition
                 const rotationAmount = Math.floor(Math.random() * 4) * 90;
@@ -182,12 +182,12 @@ export class ChessBoardService {
     }
 
     private initLights() {
-        let light1 = new Light($V([-1, 1, 1]), $V([.7, .7, .7]), $V([1, 1, 1]), $V([.2, .2, .2]));
-        let light2 = new Light($V([15, 15, -30]), $V([0, 0, .2]), $V([.1, .1, .7]), $V([0, 0, .1]));
-        let light3 = new Light($V([-15, 15, -30]), $V([.2, 0, 0]), $V([.3, .1, .1]), $V([.1, 0, 0]));
-        let light4 = new Light($V([0, 15, 30]), $V([0, .2, 0]), $V([.1, .5, 1.]), $V([0, .1, 0]));
+        let whiteLight = new Light($V([-1, 1, 1]), $V([.7, .7, .7]), $V([1, 1, 1]), $V([.2, .2, .2]));
+        let blueLight = new Light($V([15, 15, -30]), $V([0, 0, .2]), $V([.1, .1, .7]), $V([0, 0, .1]));
+        let redLight = new Light($V([-15, 15, -30]), $V([.2, 0, 0]), $V([.3, .1, .1]), $V([.1, 0, 0]));
+        let greenLight = new Light($V([0, 15, 30]), $V([0, .2, 0]), $V([.1, .2, 1.]), $V([0, .1, 0]));
 
-        this.lights.push(light1, light2, light3, light4);
+        this.lights.push(whiteLight, blueLight, redLight, greenLight);
     }
 
     public initializeShaders() {

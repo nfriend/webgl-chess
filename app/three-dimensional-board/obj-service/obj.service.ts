@@ -26,7 +26,7 @@ export class AssetService {
         bishop: 'assets/obj/bishop.obj',
         queen: 'assets/obj/queen.obj',
         king: 'assets/obj/king.obj',
-        squareDark: 'assets/obj/square-dark.obj',
+        square: 'assets/obj/square.obj',
         boardBorder: 'assets/obj/board-border.obj',
         table: 'assets/obj/table.obj'
     };

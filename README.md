@@ -1,6 +1,8 @@
 # webgl-chess
 Final project for HCI 557: Computer Graphics and Geometric Modeling at [Iowa State University](http://www.vrac.iastate.edu/hci/)
 
+<img src="screenshots/close.png" alt="WebGL Chess" />
+
 This project is built with the following technologies:
 
 - Vanilla [WebGL](https://developer.mozilla.org/en-US/docs/Web/API/WebGL_API) for scene rendering
@@ -40,6 +42,7 @@ Note that this project has not been thoroughly tested in browsers other than Chr
 ChessJS was built with a lot of help.  A big thanks to following sources:
 
 - Chess piece `.obj`'s from http://blender.freemovies.co.uk/modelling-making-a-chess-set/
+- Table model from http://www.turbosquid.com/FullPreview/Index.cfm/ID/167072
 - Wood textures from http://www.myfreetextures.com/ and http://bgfons.com/download/1582
 - Green background from http://www.zingerbug.com/background.php?MyFile=green_parchment_paper_wallpaper_texture_seamless.php&ID=C732.php
 - "Chess" font for chess icons in 2D mode from http://www.dafont.com/chess.font
