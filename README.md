@@ -1,7 +1,9 @@
 # webgl-chess
 Final project for HCI 557: Computer Graphics and Geometric Modeling at [Iowa State University](http://www.vrac.iastate.edu/hci/)
 
-<img src="screenshots/close.png" alt="WebGL Chess" />
+<img src="screenshots/close.png" />
+<br />
+<img src="screenshots/far.png" />
 
 This project is built with the following technologies:
 
