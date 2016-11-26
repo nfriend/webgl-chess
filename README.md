@@ -12,7 +12,7 @@ Final project for HCI 557: Computer Graphics and Geometric Modeling at [Iowa Sta
 
 ## Features
 
-- Utilizes [Stockfish](https://stockfishchess.org/) Chess AI to generate chess moves for both players client-side
+- Utilizes [Stockfish](https://stockfishchess.org/) Chess AI (in the form of [stockfish-js](https://github.com/exoticorn/stockfish-js)) to generate chess moves for both players client-side
   - Before you ask :smile:: no, you can't move the pieces yourself!  This level of interactivity was beyond the scope of this class project.  This is next on my to-do list if I get bored or inspired.
 - Full camera navigation using mouse (click + drag and scroll wheel), keyboard (arrow keys and `-` and `+`), and mobile gestures (drag to pan, pinch to zoom, two-finger rotate)
 - Supports standard chess play - castling, substitution, check, etc.
