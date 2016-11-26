@@ -95,7 +95,7 @@ ChessJS was built with a lot of help.  A big thanks to following sources:
 Here's what I used to make `webgl-chess`:
 
 - [Visual Studio Code](https://code.visualstudio.com/) for editing
-- [Fira Code](https://github.com/tonsky/FiraCode) as my editor's code a
+- [Fira Code](https://github.com/tonsky/FiraCode) as a coding font
 - [Blender](https://www.blender.org/) and [Gimp](https://www.gimp.org/) for object modeling and texture mapping/editing
 
 
