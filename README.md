@@ -14,7 +14,20 @@ Final project for HCI 557: Computer Graphics and Geometric Modeling at [Iowa Sta
   - Before you ask :smile:: no, you can't move the pieces yourself!  This level of interactivity was beyond the scope of this class project.  This is next on my to-do list if I get bored or inspired.
 - Full camera navigation using mouse (click + drag and scroll wheel), keyboard (arrow keys and `-` and `+`), and mobile gestures (drag to pan, pinch to zoom, two-finger rotate)
 - Supports standard chess play - castling, substitution, check, etc.
-- Written in vanilla WebGL - no 
+- Written in vanilla WebGL - no wrapping or abstraction libraries used.
+
+## Grading Rubric
+
+Based on the grading rubric provided in class, this project is worth the full 15 points from the following categories:
+- **Modeling:** 3 points for complex objects
+- **Light:** 4 points for combined, colored light on all surfaces
+  - The colored lights are subtle, but if you zoom in closely on a piece, you should be able to see a slight red and blue glare reflecting off the pieces and the board.
+- **Appearance:** 2 points for basic texturing
+- **Navigation/Interaction:** 3 points for navigation with the keyboard and mouse (and mobile gestures!)
+- **Keyframe Animation:** 3 points for triggered animations
+  - Animations are triggered in response to the chess engine's decisions
+
+**Total: 15 points**
 
 ## Options
 
