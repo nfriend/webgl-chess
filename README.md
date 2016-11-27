@@ -18,6 +18,11 @@ Final project for HCI 557: Computer Graphics and Geometric Modeling at [Iowa Sta
 - Supports standard chess play - castling, substitution, check, etc.
 - Written in vanilla WebGL - no wrapping or abstraction libraries used.
 
+## Presentation Video
+
+View my presentation here: https://youtu.be/8QwYRF_P11U
+My PowerPoint slides for this presentation are located in this repository as [HCI557FinalProject.pptx](HCI557FinalProject.pptx).
+
 ## Grading Rubric
 
 Based on the grading rubric provided in class, this project is worth the full 15 points from the following categories:
