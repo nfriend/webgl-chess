@@ -20,8 +20,7 @@ Final project for HCI 557: Computer Graphics and Geometric Modeling at [Iowa Sta
 
 ## Presentation Video
 
-View my presentation here: https://youtu.be/8QwYRF_P11U
-My PowerPoint slides for this presentation are located in this repository as [HCI557FinalProject.pptx](HCI557FinalProject.pptx).
+View my presentation here: https://youtu.be/8QwYRF_P11U. My PowerPoint slides for this presentation are located in this repository as [HCI557FinalProject.pptx](HCI557FinalProject.pptx).
 
 ## Grading Rubric
 
