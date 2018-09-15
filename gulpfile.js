@@ -31,10 +31,13 @@ gulp.task('scripts', () => {
         .pipe(rename('webgl-chess.js'))
         .pipe(gulp.dest(dest));
 
-    const stockfishStream = gulp.src('./app/stockfish/stockfish.js')
+    const staticFilesStream = gulp.src([
+            './app/stockfish/stockfish.js',
+            './package.json'
+        ])
         .pipe(gulp.dest(dest));
 
-    return merge2(tsStream, stockfishStream);
+    return merge2(tsStream, staticFilesStream);
 });
 
 gulp.task('scripts:watch', () => {
